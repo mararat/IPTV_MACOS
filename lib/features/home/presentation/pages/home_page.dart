@@ -77,7 +77,7 @@ class HomePage extends StatelessWidget {
         Expanded(
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1100),
+              constraints: const BoxConstraints(maxWidth: 900, maxHeight: 280),
               child: BlocBuilder<AuthBloc, AuthState>(
                 builder: (context, authState) {
                   final liveCount = authState is AuthAuthenticated ? authState.liveCount : 0;
@@ -212,38 +212,28 @@ class _DashCardState extends State<_DashCard> {
               children: [
                 Positioned(right: -20, bottom: -20, child: Icon(widget.icon, size: 120, color: Colors.white.withAlpha(10))),
                 Padding(
-                  padding: const EdgeInsets.all(32),
+                  padding: const EdgeInsets.all(22),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Spacer(),
                       Container(
-                        width: 60, height: 60,
-                        decoration: BoxDecoration(color: Colors.white.withAlpha(28), borderRadius: BorderRadius.circular(16)),
-                        child: Icon(widget.icon, color: Colors.white, size: 32),
-                      ),
-                      const SizedBox(height: 24),
-                      Text(widget.title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.3)),
-                      const SizedBox(height: 6),
-                      Text(widget.subtitle, style: TextStyle(fontSize: 14, color: Colors.white.withAlpha(190))),
-                      const SizedBox(height: 24),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                        width: 42, height: 42,
                         decoration: BoxDecoration(color: Colors.white.withAlpha(28), borderRadius: BorderRadius.circular(12)),
-                        child: Text(
-                          widget.count > 0 ? '${widget.count} içerik' : 'Yükleniyor...',
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
-                        ),
+                        child: Icon(widget.icon, color: Colors.white, size: 22),
                       ),
-                      const Spacer(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text('Gözat', style: TextStyle(fontSize: 13, color: Colors.white.withAlpha(160))),
-                          const SizedBox(width: 4),
-                          Icon(Icons.arrow_forward_rounded, size: 16, color: Colors.white.withAlpha(160)),
-                        ],
+                      const SizedBox(height: 14),
+                      Text(widget.title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.2)),
+                      const SizedBox(height: 3),
+                      Text(widget.subtitle, style: TextStyle(fontSize: 11, color: Colors.white.withAlpha(180))),
+                      const SizedBox(height: 14),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+                        decoration: BoxDecoration(color: Colors.white.withAlpha(28), borderRadius: BorderRadius.circular(8)),
+                        child: Text(
+                          widget.count > 0 ? '${widget.count} içerik' : '...',
+                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white),
+                        ),
                       ),
                     ],
                   ),
