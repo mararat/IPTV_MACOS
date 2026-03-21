@@ -178,7 +178,13 @@ class _LiveChannelsPageState extends State<LiveChannelsPage> {
                     ),
                   ),
                   // Player area
-                  Expanded(child: _buildPlayerArea(cs)),
+                  Expanded(child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: _buildPlayerArea(cs),
+                    ),
+                  )),
                 ],
               ),
             ),

@@ -243,7 +243,13 @@ class _SeriesListPageState extends State<SeriesListPage> {
         ]),
       ),
       // RIGHT %75 — player
-      Expanded(child: _videoController != null ? _buildInlinePlayer(cs) : _buildPlayerPlaceholder(cs)),
+      Expanded(child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: _videoController != null ? _buildInlinePlayer(cs) : _buildPlayerPlaceholder(cs),
+        ),
+      )),
     ]);
   }
 

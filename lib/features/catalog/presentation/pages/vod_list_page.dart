@@ -211,7 +211,11 @@ class _VodListPageState extends State<VodListPage> {
         ]),
       )),
       // Right: player
-      Expanded(child: MouseRegion(onHover: (_) => _onMouseMove(), child: Container(color: Colors.black, child: Stack(fit: StackFit.expand, children: [
+      Expanded(child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: MouseRegion(onHover: (_) => _onMouseMove(), child: Container(color: Colors.black, child: Stack(fit: StackFit.expand, children: [
         Video(controller: _videoController!, controls: (_) => const SizedBox.shrink()),
         if (_isBuffering) const Center(child: CircularProgressIndicator(color: Colors.white70, strokeWidth: 3)),
         // Top
@@ -250,7 +254,7 @@ class _VodListPageState extends State<VodListPage> {
                 const Spacer(),
               ]),
             ])))),
-      ])))),
+      ])))))),
     ]);
   }
 
