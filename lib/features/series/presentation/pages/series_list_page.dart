@@ -271,7 +271,7 @@ class _SeriesListPageState extends State<SeriesListPage> {
       Video(controller: _videoController!, controls: (_) => const SizedBox.shrink()),
       if (_isBuffering) const Center(child: CircularProgressIndicator(color: Colors.white70, strokeWidth: 3)),
       // Top bar
-      Positioned(top: 0, left: 0, right: 0, child: IgnorePointer(ignoring: !_showControls, child: AnimatedOpacity(opacity: _showControls ? 1.0 : 0.0, duration: const Duration(milliseconds: 200),
+      Positioned(top: 0, left: 0, right: 0, child: AnimatedOpacity(opacity: _showControls ? 1.0 : 0.0, duration: const Duration(milliseconds: 200),
         child: Container(padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.black87, Colors.transparent])),
           child: Row(children: [
@@ -295,9 +295,9 @@ class _SeriesListPageState extends State<SeriesListPage> {
             ),
             IconButton(icon: const Icon(Icons.fullscreen, color: Colors.white, size: 22), onPressed: () => setState(() => _isFullscreen = true)),
             IconButton(icon: const Icon(Icons.close, color: Colors.white70, size: 20), onPressed: _stopPlayer),
-          ]))))),
+          ])))),
       // Bottom bar — seek + controls
-      Positioned(bottom: 0, left: 0, right: 0, child: IgnorePointer(ignoring: !_showControls, child: AnimatedOpacity(opacity: _showControls ? 1.0 : 0.0, duration: const Duration(milliseconds: 200),
+      Positioned(bottom: 0, left: 0, right: 0, child: AnimatedOpacity(opacity: _showControls ? 1.0 : 0.0, duration: const Duration(milliseconds: 200),
         child: Container(padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
           decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.bottomCenter, end: Alignment.topCenter, colors: [Colors.black87, Colors.transparent])),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -321,7 +321,7 @@ class _SeriesListPageState extends State<SeriesListPage> {
                 child: Slider(value: _isMuted ? 0 : _volume, max: 100, onChanged: (v) { setState(() { _volume = v; _isMuted = false; }); _player?.setVolume(v); }))),
               const Spacer(),
             ]),
-          ]))))),
+          ])))),
     ])));
   }
 
@@ -330,7 +330,7 @@ class _SeriesListPageState extends State<SeriesListPage> {
     return MouseRegion(onHover: (_) => _onMouseMove(), child: Container(color: Colors.black, child: Stack(fit: StackFit.expand, children: [
       Video(controller: _videoController!, controls: (_) => const SizedBox.shrink()),
       if (_isBuffering) const Center(child: CircularProgressIndicator(color: Colors.white70)),
-      Positioned(top: 0, left: 0, right: 0, child: IgnorePointer(ignoring: !_showControls, child: AnimatedOpacity(opacity: _showControls ? 1.0 : 0.0, duration: const Duration(milliseconds: 200),
+      Positioned(top: 0, left: 0, right: 0, child: AnimatedOpacity(opacity: _showControls ? 1.0 : 0.0, duration: const Duration(milliseconds: 200),
         child: Container(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.black87, Colors.transparent])),
           child: Row(children: [
@@ -342,8 +342,8 @@ class _SeriesListPageState extends State<SeriesListPage> {
             if (_subtitleTracks.isNotEmpty) PopupMenuButton<mk.SubtitleTrack?>(tooltip: 'Altyazı', icon: const Icon(Icons.closed_caption, color: Colors.white70, size: 22), offset: const Offset(0, 40),
               itemBuilder: (_) => [const PopupMenuItem(value: null, child: Text('Kapalı')), ..._subtitleTracks.map((t) => PopupMenuItem(value: t, child: Text(t.title ?? t.language ?? t.id)))],
               onSelected: (t) => t == null ? _player?.setSubtitleTrack(mk.SubtitleTrack.no()) : _player?.setSubtitleTrack(t)),
-          ]))))),
-      Positioned(bottom: 0, left: 0, right: 0, child: IgnorePointer(ignoring: !_showControls, child: AnimatedOpacity(opacity: _showControls ? 1.0 : 0.0, duration: const Duration(milliseconds: 200),
+          ])))),
+      Positioned(bottom: 0, left: 0, right: 0, child: AnimatedOpacity(opacity: _showControls ? 1.0 : 0.0, duration: const Duration(milliseconds: 200),
         child: Container(padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
           decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.bottomCenter, end: Alignment.topCenter, colors: [Colors.black87, Colors.transparent])),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -364,7 +364,7 @@ class _SeriesListPageState extends State<SeriesListPage> {
               SizedBox(width: 110, child: SliderTheme(data: const SliderThemeData(trackHeight: 2, thumbShape: RoundSliderThumbShape(enabledThumbRadius: 6), activeTrackColor: Colors.white70, inactiveTrackColor: Colors.white24, thumbColor: Colors.white),
                 child: Slider(value: _isMuted ? 0 : _volume, max: 100, onChanged: (v) { setState(() { _volume = v; _isMuted = false; }); _player?.setVolume(v); }))),
             ]),
-          ]))))),
+          ])))),
     ])));
   }
 }

@@ -124,9 +124,7 @@ class _PlayerPageMacState extends State<PlayerPageMac> {
               if (_isBuffering) const Center(child: CircularProgressIndicator(color: Colors.white70)),
 
               // Controls overlay
-              IgnorePointer(
-                ignoring: !_showControls,
-                child: AnimatedOpacity(
+              AnimatedOpacity(
                   opacity: _showControls ? 1.0 : 0.0,
                   duration: const Duration(milliseconds: 250),
                   child: Container(
@@ -210,7 +208,6 @@ class _PlayerPageMacState extends State<PlayerPageMac> {
                     ),
                   ),
                 ),
-              ),
             ],
           ),
         ),
