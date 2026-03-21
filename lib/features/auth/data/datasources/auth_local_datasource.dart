@@ -18,7 +18,10 @@ abstract class AuthLocalDataSource {
 }
 
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
-  AuthLocalDataSourceImpl(this._storage);
+  AuthLocalDataSourceImpl(FlutterSecureStorage _)
+      : _storage = const FlutterSecureStorage(
+          mOptions: MacOsOptions(usesDataProtectionKeychain: true),
+        );
 
   final FlutterSecureStorage _storage;
 
