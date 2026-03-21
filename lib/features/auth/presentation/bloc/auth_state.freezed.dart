@@ -128,12 +128,12 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( UserEntity user,  int liveCount,  int vodCount,  int seriesCount,  bool preloadComplete)?  authenticated,TResult Function()?  unauthenticated,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( UserEntity user,  int liveCount,  int vodCount,  int seriesCount,  bool preloadComplete,  bool liveLoading,  bool vodLoading,  bool seriesLoading)?  authenticated,TResult Function()?  unauthenticated,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case AuthInitial() when initial != null:
 return initial();case AuthLoading() when loading != null:
 return loading();case AuthAuthenticated() when authenticated != null:
-return authenticated(_that.user,_that.liveCount,_that.vodCount,_that.seriesCount,_that.preloadComplete);case AuthUnauthenticated() when unauthenticated != null:
+return authenticated(_that.user,_that.liveCount,_that.vodCount,_that.seriesCount,_that.preloadComplete,_that.liveLoading,_that.vodLoading,_that.seriesLoading);case AuthUnauthenticated() when unauthenticated != null:
 return unauthenticated();case AuthError() when error != null:
 return error(_that.message);case _:
   return orElse();
@@ -153,12 +153,12 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( UserEntity user,  int liveCount,  int vodCount,  int seriesCount,  bool preloadComplete)  authenticated,required TResult Function()  unauthenticated,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( UserEntity user,  int liveCount,  int vodCount,  int seriesCount,  bool preloadComplete,  bool liveLoading,  bool vodLoading,  bool seriesLoading)  authenticated,required TResult Function()  unauthenticated,required TResult Function( String message)  error,}) {final _that = this;
 switch (_that) {
 case AuthInitial():
 return initial();case AuthLoading():
 return loading();case AuthAuthenticated():
-return authenticated(_that.user,_that.liveCount,_that.vodCount,_that.seriesCount,_that.preloadComplete);case AuthUnauthenticated():
+return authenticated(_that.user,_that.liveCount,_that.vodCount,_that.seriesCount,_that.preloadComplete,_that.liveLoading,_that.vodLoading,_that.seriesLoading);case AuthUnauthenticated():
 return unauthenticated();case AuthError():
 return error(_that.message);}
 }
@@ -174,12 +174,12 @@ return error(_that.message);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( UserEntity user,  int liveCount,  int vodCount,  int seriesCount,  bool preloadComplete)?  authenticated,TResult? Function()?  unauthenticated,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( UserEntity user,  int liveCount,  int vodCount,  int seriesCount,  bool preloadComplete,  bool liveLoading,  bool vodLoading,  bool seriesLoading)?  authenticated,TResult? Function()?  unauthenticated,TResult? Function( String message)?  error,}) {final _that = this;
 switch (_that) {
 case AuthInitial() when initial != null:
 return initial();case AuthLoading() when loading != null:
 return loading();case AuthAuthenticated() when authenticated != null:
-return authenticated(_that.user,_that.liveCount,_that.vodCount,_that.seriesCount,_that.preloadComplete);case AuthUnauthenticated() when unauthenticated != null:
+return authenticated(_that.user,_that.liveCount,_that.vodCount,_that.seriesCount,_that.preloadComplete,_that.liveLoading,_that.vodLoading,_that.seriesLoading);case AuthUnauthenticated() when unauthenticated != null:
 return unauthenticated();case AuthError() when error != null:
 return error(_that.message);case _:
   return null;
@@ -257,7 +257,7 @@ String toString() {
 
 
 class AuthAuthenticated implements AuthState {
-  const AuthAuthenticated({required this.user, this.liveCount = 0, this.vodCount = 0, this.seriesCount = 0, this.preloadComplete = false});
+  const AuthAuthenticated({required this.user, this.liveCount = 0, this.vodCount = 0, this.seriesCount = 0, this.preloadComplete = false, this.liveLoading = false, this.vodLoading = false, this.seriesLoading = false});
   
 
  final  UserEntity user;
@@ -265,6 +265,9 @@ class AuthAuthenticated implements AuthState {
 @JsonKey() final  int vodCount;
 @JsonKey() final  int seriesCount;
 @JsonKey() final  bool preloadComplete;
+@JsonKey() final  bool liveLoading;
+@JsonKey() final  bool vodLoading;
+@JsonKey() final  bool seriesLoading;
 
 /// Create a copy of AuthState
 /// with the given fields replaced by the non-null parameter values.
@@ -276,16 +279,16 @@ $AuthAuthenticatedCopyWith<AuthAuthenticated> get copyWith => _$AuthAuthenticate
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthAuthenticated&&(identical(other.user, user) || other.user == user)&&(identical(other.liveCount, liveCount) || other.liveCount == liveCount)&&(identical(other.vodCount, vodCount) || other.vodCount == vodCount)&&(identical(other.seriesCount, seriesCount) || other.seriesCount == seriesCount)&&(identical(other.preloadComplete, preloadComplete) || other.preloadComplete == preloadComplete));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthAuthenticated&&(identical(other.user, user) || other.user == user)&&(identical(other.liveCount, liveCount) || other.liveCount == liveCount)&&(identical(other.vodCount, vodCount) || other.vodCount == vodCount)&&(identical(other.seriesCount, seriesCount) || other.seriesCount == seriesCount)&&(identical(other.preloadComplete, preloadComplete) || other.preloadComplete == preloadComplete)&&(identical(other.liveLoading, liveLoading) || other.liveLoading == liveLoading)&&(identical(other.vodLoading, vodLoading) || other.vodLoading == vodLoading)&&(identical(other.seriesLoading, seriesLoading) || other.seriesLoading == seriesLoading));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,user,liveCount,vodCount,seriesCount,preloadComplete);
+int get hashCode => Object.hash(runtimeType,user,liveCount,vodCount,seriesCount,preloadComplete,liveLoading,vodLoading,seriesLoading);
 
 @override
 String toString() {
-  return 'AuthState.authenticated(user: $user, liveCount: $liveCount, vodCount: $vodCount, seriesCount: $seriesCount, preloadComplete: $preloadComplete)';
+  return 'AuthState.authenticated(user: $user, liveCount: $liveCount, vodCount: $vodCount, seriesCount: $seriesCount, preloadComplete: $preloadComplete, liveLoading: $liveLoading, vodLoading: $vodLoading, seriesLoading: $seriesLoading)';
 }
 
 
@@ -296,7 +299,7 @@ abstract mixin class $AuthAuthenticatedCopyWith<$Res> implements $AuthStateCopyW
   factory $AuthAuthenticatedCopyWith(AuthAuthenticated value, $Res Function(AuthAuthenticated) _then) = _$AuthAuthenticatedCopyWithImpl;
 @useResult
 $Res call({
- UserEntity user, int liveCount, int vodCount, int seriesCount, bool preloadComplete
+ UserEntity user, int liveCount, int vodCount, int seriesCount, bool preloadComplete, bool liveLoading, bool vodLoading, bool seriesLoading
 });
 
 
@@ -313,13 +316,16 @@ class _$AuthAuthenticatedCopyWithImpl<$Res>
 
 /// Create a copy of AuthState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? user = null,Object? liveCount = null,Object? vodCount = null,Object? seriesCount = null,Object? preloadComplete = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? user = null,Object? liveCount = null,Object? vodCount = null,Object? seriesCount = null,Object? preloadComplete = null,Object? liveLoading = null,Object? vodLoading = null,Object? seriesLoading = null,}) {
   return _then(AuthAuthenticated(
 user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
 as UserEntity,liveCount: null == liveCount ? _self.liveCount : liveCount // ignore: cast_nullable_to_non_nullable
 as int,vodCount: null == vodCount ? _self.vodCount : vodCount // ignore: cast_nullable_to_non_nullable
 as int,seriesCount: null == seriesCount ? _self.seriesCount : seriesCount // ignore: cast_nullable_to_non_nullable
 as int,preloadComplete: null == preloadComplete ? _self.preloadComplete : preloadComplete // ignore: cast_nullable_to_non_nullable
+as bool,liveLoading: null == liveLoading ? _self.liveLoading : liveLoading // ignore: cast_nullable_to_non_nullable
+as bool,vodLoading: null == vodLoading ? _self.vodLoading : vodLoading // ignore: cast_nullable_to_non_nullable
+as bool,seriesLoading: null == seriesLoading ? _self.seriesLoading : seriesLoading // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

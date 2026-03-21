@@ -81,25 +81,27 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onPreloadCounts(AuthPreloadCounts event, Emitter<AuthState> emit) async {
     final s = state;
     if (s is! AuthAuthenticated) return;
-    emit(s.copyWith(preloadComplete: false));
+    emit(s.copyWith(preloadComplete: false, liveLoading: true, vodLoading: true, seriesLoading: true));
 
     try {
       final liveStreams = await _xtreamApi.getLiveStreams();
       if (emit.isDone) return;
-      emit(s.copyWith(liveCount: liveStreams.length, preloadComplete: false));
+      emit((state as AuthAuthenticated).copyWith(liveCount: liveStreams.length, liveLoading: false));
 
       final vodStreams = await _xtreamApi.getVodStreams();
       if (emit.isDone) return;
-      emit(s.copyWith(liveCount: liveStreams.length, vodCount: vodStreams.length, preloadComplete: false));
+      emit((state as AuthAuthenticated).copyWith(vodCount: vodStreams.length, vodLoading: false));
 
       final seriesList = await _xtreamApi.getSeries();
       if (emit.isDone) return;
-      emit(s.copyWith(liveCount: liveStreams.length, vodCount: vodStreams.length, seriesCount: seriesList.length, preloadComplete: true));
+      emit((state as AuthAuthenticated).copyWith(seriesCount: seriesList.length, seriesLoading: false, preloadComplete: true));
     } catch (e, st) {
       _logger.debug('Preload counts failed: $e', st);
       if (!emit.isDone) {
         final current = state;
-        if (current is AuthAuthenticated) emit(current.copyWith(preloadComplete: true));
+        if (current is AuthAuthenticated) {
+          emit(current.copyWith(preloadComplete: true, liveLoading: false, vodLoading: false, seriesLoading: false));
+        }
       }
     }
   }

@@ -13,6 +13,9 @@ sealed class AuthState with _$AuthState {
     @Default(0) int vodCount,
     @Default(0) int seriesCount,
     @Default(false) bool preloadComplete,
+    @Default(false) bool liveLoading,
+    @Default(false) bool vodLoading,
+    @Default(false) bool seriesLoading,
   }) = AuthAuthenticated;
   const factory AuthState.unauthenticated() = AuthUnauthenticated;
   const factory AuthState.error({required String message}) = AuthError;

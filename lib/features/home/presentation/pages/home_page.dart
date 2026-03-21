@@ -80,27 +80,28 @@ class HomePage extends StatelessWidget {
               constraints: const BoxConstraints(maxWidth: 900, maxHeight: 280),
               child: BlocBuilder<AuthBloc, AuthState>(
                 builder: (context, authState) {
-                  final liveCount = authState is AuthAuthenticated ? authState.liveCount : 0;
-                  final vodCount = authState is AuthAuthenticated ? authState.vodCount : 0;
-                  final seriesCount = authState is AuthAuthenticated ? authState.seriesCount : 0;
+                  final auth = authState is AuthAuthenticated ? authState : null;
 
                   return Row(
                     children: [
                       Expanded(child: _DashCard(
                         icon: Icons.live_tv_rounded, title: 'Canlı TV', subtitle: 'Canlı yayın kanalları',
-                        count: liveCount, gradient: const [Color(0xFFE74C3C), Color(0xFFC0392B)],
+                        count: auth?.liveCount ?? 0, isLoading: auth?.liveLoading ?? false,
+                        gradient: const [Color(0xFFE74C3C), Color(0xFFC0392B)],
                         onTap: () => onNavigate('live'),
                       )),
                       const SizedBox(width: 18),
                       Expanded(child: _DashCard(
                         icon: Icons.movie_rounded, title: 'Filmler', subtitle: 'Film arşivi',
-                        count: vodCount, gradient: const [Color(0xFF2980B9), Color(0xFF1A5276)],
+                        count: auth?.vodCount ?? 0, isLoading: auth?.vodLoading ?? false,
+                        gradient: const [Color(0xFF2980B9), Color(0xFF1A5276)],
                         onTap: () => onNavigate('vod'),
                       )),
                       const SizedBox(width: 18),
                       Expanded(child: _DashCard(
                         icon: Icons.tv_rounded, title: 'Diziler', subtitle: 'Dizi arşivi',
-                        count: seriesCount, gradient: const [Color(0xFF1ABC9C), Color(0xFF117A65)],
+                        count: auth?.seriesCount ?? 0, isLoading: auth?.seriesLoading ?? false,
+                        gradient: const [Color(0xFF1ABC9C), Color(0xFF117A65)],
                         onTap: () => onNavigate('series'),
                       )),
                     ],
@@ -177,8 +178,8 @@ class HomePage extends StatelessWidget {
 }
 
 class _DashCard extends StatefulWidget {
-  const _DashCard({required this.icon, required this.title, required this.subtitle, required this.count, required this.gradient, required this.onTap});
-  final IconData icon; final String title; final String subtitle; final int count; final List<Color> gradient; final VoidCallback onTap;
+  const _DashCard({required this.icon, required this.title, required this.subtitle, required this.count, required this.gradient, required this.onTap, this.isLoading = false});
+  final IconData icon; final String title; final String subtitle; final int count; final List<Color> gradient; final VoidCallback onTap; final bool isLoading;
   @override
   State<_DashCard> createState() => _DashCardState();
 }
@@ -212,31 +213,43 @@ class _DashCardState extends State<_DashCard> {
             child: Stack(
               children: [
                 Positioned(right: -20, bottom: -20, child: Icon(widget.icon, size: 120, color: Colors.white.withAlpha(10))),
-                Padding(
-                  padding: const EdgeInsets.all(22),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 42, height: 42,
-                        decoration: BoxDecoration(color: Colors.white.withAlpha(28), borderRadius: BorderRadius.circular(12)),
-                        child: Icon(widget.icon, color: Colors.white, size: 22),
-                      ),
-                      const SizedBox(height: 14),
-                      Text(widget.title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.2)),
-                      const SizedBox(height: 3),
-                      Text(widget.subtitle, style: TextStyle(fontSize: 11, color: Colors.white.withAlpha(180))),
-                      const SizedBox(height: 14),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
-                        decoration: BoxDecoration(color: Colors.white.withAlpha(28), borderRadius: BorderRadius.circular(8)),
-                        child: Text(
-                          widget.count > 0 ? '${widget.count} içerik' : '...',
-                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white),
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(22),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 42, height: 42,
+                          decoration: BoxDecoration(color: Colors.white.withAlpha(28), borderRadius: BorderRadius.circular(12)),
+                          child: Icon(widget.icon, color: Colors.white, size: 22),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 14),
+                        Text(widget.title, textAlign: TextAlign.center, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.2)),
+                        const SizedBox(height: 3),
+                        Text(widget.subtitle, textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: Colors.white.withAlpha(180))),
+                        const SizedBox(height: 14),
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          child: widget.isLoading
+                              ? Container(
+                                  key: const ValueKey('loading'),
+                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+                                  decoration: BoxDecoration(color: Colors.white.withAlpha(28), borderRadius: BorderRadius.circular(8)),
+                                  child: const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
+                                )
+                              : Container(
+                                  key: const ValueKey('count'),
+                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+                                  decoration: BoxDecoration(color: Colors.white.withAlpha(28), borderRadius: BorderRadius.circular(8)),
+                                  child: Text(
+                                    widget.count > 0 ? '${widget.count} içerik' : '...',
+                                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white),
+                                  ),
+                                ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
