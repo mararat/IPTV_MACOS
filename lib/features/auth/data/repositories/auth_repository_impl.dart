@@ -42,30 +42,22 @@ class AuthRepositoryImpl implements AuthRepository {
       // Save the resolved URL (after redirect resolution)
       final resolvedUrl = _xtreamApi.serverUrl;
 
-      try {
-        await _localDataSource.saveCredentials(
-          serverUrl: resolvedUrl,
-          username: username,
-          password: password,
-        );
-      } catch (_) {
-        // Ignore credential save errors on macOS (Keychain sandbox)
-      }
+      await _localDataSource.saveCredentials(
+        serverUrl: resolvedUrl,
+        username: username,
+        password: password,
+      );
 
       final userInfo = response.userInfo;
-      try {
-        await _localDataSource.saveUser({
-          'username': userInfo.username,
-          'status': userInfo.status ?? 'Active',
-          'expDate': userInfo.expDate ?? '',
-          'maxConnections': userInfo.maxConnections ?? '',
-          'activeCons': userInfo.activeCons ?? '',
-          'createdAt': userInfo.createdAt ?? '',
-          'isTrial': userInfo.isTrial ?? '0',
-        });
-      } catch (_) {
-        // Ignore user save errors on macOS
-      }
+      await _localDataSource.saveUser({
+        'username': userInfo.username,
+        'status': userInfo.status ?? 'Active',
+        'expDate': userInfo.expDate ?? '',
+        'maxConnections': userInfo.maxConnections ?? '',
+        'activeCons': userInfo.activeCons ?? '',
+        'createdAt': userInfo.createdAt ?? '',
+        'isTrial': userInfo.isTrial ?? '0',
+      });
 
       final user = UserEntity(
         username: userInfo.username,
