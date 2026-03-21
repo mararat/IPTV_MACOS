@@ -420,7 +420,7 @@ class _CategorySidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 180,
+      width: 200,
       decoration: BoxDecoration(color: AppColors.primary, border: Border(right: BorderSide(color: AppColors.primaryDark))),
       child: Column(children: [
         _CatTile(label: 'Tümü', count: null, isSelected: state.selectedCategoryId == null, onTap: () => context.read<CatalogBloc>().add(const CatalogEvent.loadChannels())),
@@ -449,7 +449,7 @@ class _CatTile extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(border: Border(left: BorderSide(color: isSelected ? Colors.white : Colors.transparent, width: 3))),
           child: Row(children: [
-            Expanded(child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400, color: isSelected ? Colors.white : Colors.white.withAlpha(200)))),
+            Expanded(child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 13, fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400, color: isSelected ? Colors.white : Colors.white.withAlpha(200)))),
             if (count != null) Container(padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1), decoration: BoxDecoration(color: Colors.white.withAlpha(18), borderRadius: BorderRadius.circular(4)),
               child: Text('$count', style: TextStyle(fontSize: 10, color: Colors.white.withAlpha(170)))),
           ]),
