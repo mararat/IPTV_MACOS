@@ -133,6 +133,12 @@ class ServiceLocator {
     loginUseCase, logoutUseCase, checkAuthUseCase,
     authRepository, xtreamApi, analyticsService, null, logger,
   );
+
+  /// Clean up all resources on app exit.
+  void dispose() {
+    xtreamApi.clearCredentials();
+    dio.close(force: true);
+  }
 }
 
 final sl = ServiceLocator.instance;

@@ -11,3 +11,13 @@ void main() async {
   sl.init();
   runApp(const App());
 }
+
+/// Global lifecycle observer — cleans up resources on app exit.
+class AppLifecycleObserver extends WidgetsBindingObserver {
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.detached) {
+      sl.dispose();
+    }
+  }
+}
