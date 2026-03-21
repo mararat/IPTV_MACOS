@@ -72,41 +72,43 @@ class HomePage extends StatelessWidget {
           ),
         ),
 
-        // Cards — fill available space with reasonable constraints
+        // Cards — centered, compact
         Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
-            child: BlocBuilder<AuthBloc, AuthState>(
-              builder: (context, authState) {
-                final liveCount = authState is AuthAuthenticated ? authState.liveCount : 0;
-                final vodCount = authState is AuthAuthenticated ? authState.vodCount : 0;
-                final seriesCount = authState is AuthAuthenticated ? authState.seriesCount : 0;
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 820, maxHeight: 240),
+              child: BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, authState) {
+                  final liveCount = authState is AuthAuthenticated ? authState.liveCount : 0;
+                  final vodCount = authState is AuthAuthenticated ? authState.vodCount : 0;
+                  final seriesCount = authState is AuthAuthenticated ? authState.seriesCount : 0;
 
-                return Row(
-                      children: [
-                        Expanded(child: _DashCard(
-                          icon: Icons.live_tv_rounded, title: 'Canlı TV', subtitle: 'Canlı yayın kanalları',
-                          count: liveCount, gradient: const [Color(0xFFE74C3C), Color(0xFFC0392B)],
-                          onTap: () => onNavigate(1),
-                        )),
-                        const SizedBox(width: 16),
-                        Expanded(child: _DashCard(
-                          icon: Icons.movie_rounded, title: 'Filmler', subtitle: 'Film arşivi',
-                          count: vodCount, gradient: const [Color(0xFF2980B9), Color(0xFF1A5276)],
-                          onTap: () => onNavigate(2),
-                        )),
-                        const SizedBox(width: 16),
-                        Expanded(child: _DashCard(
-                          icon: Icons.tv_rounded, title: 'Diziler', subtitle: 'Dizi arşivi',
-                          count: seriesCount, gradient: const [Color(0xFF1ABC9C), Color(0xFF117A65)],
-                          onTap: () => onNavigate(3),
-                        )),
-                      ],
-                    );
-                  },
-                ),
+                  return Row(
+                    children: [
+                      Expanded(child: _DashCard(
+                        icon: Icons.live_tv_rounded, title: 'Canlı TV', subtitle: 'Canlı yayın kanalları',
+                        count: liveCount, gradient: const [Color(0xFFE74C3C), Color(0xFFC0392B)],
+                        onTap: () => onNavigate(1),
+                      )),
+                      const SizedBox(width: 18),
+                      Expanded(child: _DashCard(
+                        icon: Icons.movie_rounded, title: 'Filmler', subtitle: 'Film arşivi',
+                        count: vodCount, gradient: const [Color(0xFF2980B9), Color(0xFF1A5276)],
+                        onTap: () => onNavigate(2),
+                      )),
+                      const SizedBox(width: 18),
+                      Expanded(child: _DashCard(
+                        icon: Icons.tv_rounded, title: 'Diziler', subtitle: 'Dizi arşivi',
+                        count: seriesCount, gradient: const [Color(0xFF1ABC9C), Color(0xFF117A65)],
+                        onTap: () => onNavigate(3),
+                      )),
+                    ],
+                  );
+                },
               ),
             ),
+          ),
+        ),
 
         // Bottom user info bar
         BlocBuilder<AuthBloc, AuthState>(
@@ -198,45 +200,39 @@ class _DashCardState extends State<_DashCard> {
           transformAlignment: Alignment.center,
           decoration: BoxDecoration(
             gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: widget.gradient),
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(16),
             boxShadow: [
-              BoxShadow(color: widget.gradient.last.withAlpha(_hovered ? 70 : 35), blurRadius: _hovered ? 24 : 12, offset: Offset(0, _hovered ? 8 : 4)),
+              BoxShadow(color: widget.gradient.last.withAlpha(_hovered ? 60 : 30), blurRadius: _hovered ? 20 : 10, offset: Offset(0, _hovered ? 6 : 3)),
             ],
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(16),
             child: Stack(
               children: [
-                Positioned(right: -30, bottom: -30, child: Icon(widget.icon, size: 160, color: Colors.white.withAlpha(12))),
+                Positioned(right: -20, bottom: -20, child: Icon(widget.icon, size: 120, color: Colors.white.withAlpha(10))),
                 Padding(
-                  padding: const EdgeInsets.all(28),
+                  padding: const EdgeInsets.all(24),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
-                        width: 48, height: 48,
-                        decoration: BoxDecoration(color: Colors.white.withAlpha(28), borderRadius: BorderRadius.circular(14)),
-                        child: Icon(widget.icon, color: Colors.white, size: 26),
+                        width: 44, height: 44,
+                        decoration: BoxDecoration(color: Colors.white.withAlpha(28), borderRadius: BorderRadius.circular(12)),
+                        child: Icon(widget.icon, color: Colors.white, size: 24),
                       ),
-                      const SizedBox(height: 16),
-                      Text(widget.title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.3)),
-                      const SizedBox(height: 4),
-                      Text(widget.subtitle, style: TextStyle(fontSize: 13, color: Colors.white.withAlpha(190))),
-                      const Spacer(),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                            decoration: BoxDecoration(color: Colors.white.withAlpha(28), borderRadius: BorderRadius.circular(10)),
-                            child: Text(
-                              widget.count > 0 ? '${widget.count}' : '...',
-                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.white),
-                            ),
-                          ),
-                          const Spacer(),
-                          Icon(Icons.arrow_forward_rounded, size: 20, color: Colors.white.withAlpha(150)),
-                        ],
+                      const SizedBox(height: 14),
+                      Text(widget.title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.2)),
+                      const SizedBox(height: 3),
+                      Text(widget.subtitle, style: TextStyle(fontSize: 11, color: Colors.white.withAlpha(180))),
+                      const SizedBox(height: 14),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+                        decoration: BoxDecoration(color: Colors.white.withAlpha(28), borderRadius: BorderRadius.circular(8)),
+                        child: Text(
+                          widget.count > 0 ? '${widget.count}' : '...',
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white),
+                        ),
                       ),
                     ],
                   ),
