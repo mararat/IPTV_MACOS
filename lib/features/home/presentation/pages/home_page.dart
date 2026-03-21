@@ -77,7 +77,7 @@ class HomePage extends StatelessWidget {
         Expanded(
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1000, maxHeight: 320),
+              constraints: const BoxConstraints(maxWidth: 1100),
               child: BlocBuilder<AuthBloc, AuthState>(
                 builder: (context, authState) {
                   final liveCount = authState is AuthAuthenticated ? authState.liveCount : 0;
@@ -212,28 +212,38 @@ class _DashCardState extends State<_DashCard> {
               children: [
                 Positioned(right: -20, bottom: -20, child: Icon(widget.icon, size: 120, color: Colors.white.withAlpha(10))),
                 Padding(
-                  padding: const EdgeInsets.all(28),
+                  padding: const EdgeInsets.all(32),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      const Spacer(),
                       Container(
-                        width: 52, height: 52,
-                        decoration: BoxDecoration(color: Colors.white.withAlpha(28), borderRadius: BorderRadius.circular(14)),
-                        child: Icon(widget.icon, color: Colors.white, size: 28),
+                        width: 60, height: 60,
+                        decoration: BoxDecoration(color: Colors.white.withAlpha(28), borderRadius: BorderRadius.circular(16)),
+                        child: Icon(widget.icon, color: Colors.white, size: 32),
                       ),
-                      const SizedBox(height: 18),
-                      Text(widget.title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.3)),
-                      const SizedBox(height: 4),
-                      Text(widget.subtitle, style: TextStyle(fontSize: 13, color: Colors.white.withAlpha(190))),
-                      const SizedBox(height: 18),
+                      const SizedBox(height: 24),
+                      Text(widget.title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.3)),
+                      const SizedBox(height: 6),
+                      Text(widget.subtitle, style: TextStyle(fontSize: 14, color: Colors.white.withAlpha(190))),
+                      const SizedBox(height: 24),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                        decoration: BoxDecoration(color: Colors.white.withAlpha(28), borderRadius: BorderRadius.circular(10)),
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                        decoration: BoxDecoration(color: Colors.white.withAlpha(28), borderRadius: BorderRadius.circular(12)),
                         child: Text(
-                          widget.count > 0 ? '${widget.count}' : '...',
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.white),
+                          widget.count > 0 ? '${widget.count} içerik' : 'Yükleniyor...',
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
                         ),
+                      ),
+                      const Spacer(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Gözat', style: TextStyle(fontSize: 13, color: Colors.white.withAlpha(160))),
+                          const SizedBox(width: 4),
+                          Icon(Icons.arrow_forward_rounded, size: 16, color: Colors.white.withAlpha(160)),
+                        ],
                       ),
                     ],
                   ),

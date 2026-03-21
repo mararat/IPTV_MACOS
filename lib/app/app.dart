@@ -42,7 +42,12 @@ class _AppState extends State<App> {
             theme: AppTheme.light(),
             darkTheme: AppTheme.dark(),
             themeMode: settings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-            home: BlocBuilder<AuthBloc, AuthState>(
+            home: BlocConsumer<AuthBloc, AuthState>(
+              listener: (context, state) {
+                if (state is AuthAuthenticated && state.liveCount == 0) {
+                  context.read<AuthBloc>().add(const AuthEvent.preloadCounts());
+                }
+              },
               builder: (context, state) {
                 if (state is AuthAuthenticated) return const ShellPage();
                 if (state is AuthLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
