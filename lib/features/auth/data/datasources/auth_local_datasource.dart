@@ -46,13 +46,19 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   }
 
   @override
-  Future<String?> getServerUrl() => _storage.read(key: _serverUrlKey);
+  Future<String?> getServerUrl() async {
+    try { return await _storage.read(key: _serverUrlKey); } catch (_) { return null; }
+  }
 
   @override
-  Future<String?> getUsername() => _storage.read(key: _usernameKey);
+  Future<String?> getUsername() async {
+    try { return await _storage.read(key: _usernameKey); } catch (_) { return null; }
+  }
 
   @override
-  Future<String?> getPassword() => _storage.read(key: _passwordKey);
+  Future<String?> getPassword() async {
+    try { return await _storage.read(key: _passwordKey); } catch (_) { return null; }
+  }
 
   @override
   Future<bool> hasCredentials() async {
