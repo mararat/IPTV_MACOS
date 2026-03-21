@@ -11,3 +11,4 @@ pubspec.lock
 .DS_Store
 macos/Pods/
 macos/.symlinks/
+doc/
