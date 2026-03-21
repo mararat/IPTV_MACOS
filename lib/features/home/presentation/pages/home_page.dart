@@ -76,7 +76,7 @@ class HomePage extends StatelessWidget {
         Expanded(
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 820, maxHeight: 240),
+              constraints: const BoxConstraints(maxWidth: 1000, maxHeight: 320),
               child: BlocBuilder<AuthBloc, AuthState>(
                 builder: (context, authState) {
                   final liveCount = authState is AuthAuthenticated ? authState.liveCount : 0;
@@ -211,27 +211,27 @@ class _DashCardState extends State<_DashCard> {
               children: [
                 Positioned(right: -20, bottom: -20, child: Icon(widget.icon, size: 120, color: Colors.white.withAlpha(10))),
                 Padding(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(28),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
-                        width: 44, height: 44,
-                        decoration: BoxDecoration(color: Colors.white.withAlpha(28), borderRadius: BorderRadius.circular(12)),
-                        child: Icon(widget.icon, color: Colors.white, size: 24),
+                        width: 52, height: 52,
+                        decoration: BoxDecoration(color: Colors.white.withAlpha(28), borderRadius: BorderRadius.circular(14)),
+                        child: Icon(widget.icon, color: Colors.white, size: 28),
                       ),
-                      const SizedBox(height: 14),
-                      Text(widget.title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.2)),
-                      const SizedBox(height: 3),
-                      Text(widget.subtitle, style: TextStyle(fontSize: 11, color: Colors.white.withAlpha(180))),
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 18),
+                      Text(widget.title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.3)),
+                      const SizedBox(height: 4),
+                      Text(widget.subtitle, style: TextStyle(fontSize: 13, color: Colors.white.withAlpha(190))),
+                      const SizedBox(height: 18),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
-                        decoration: BoxDecoration(color: Colors.white.withAlpha(28), borderRadius: BorderRadius.circular(8)),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                        decoration: BoxDecoration(color: Colors.white.withAlpha(28), borderRadius: BorderRadius.circular(10)),
                         child: Text(
                           widget.count > 0 ? '${widget.count}' : '...',
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white),
+                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.white),
                         ),
                       ),
                     ],
