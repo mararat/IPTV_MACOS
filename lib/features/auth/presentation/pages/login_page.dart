@@ -83,16 +83,37 @@ class _LoginPageState extends State<LoginPage> {
                     onFieldSubmitted: (_) => _onSubmit(),
                     validator: (v) => (v == null || v.isEmpty) ? 'Sifre gerekli' : null,
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 20),
                   BlocBuilder<AuthBloc, AuthState>(
                     builder: (context, state) {
                       final isLoading = state is AuthLoading;
-                      return FilledButton(
-                        onPressed: isLoading ? null : _onSubmit,
-                        style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48), backgroundColor: AppColors.primary),
-                        child: isLoading
-                            ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                            : const Text('Baglan', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                      final errorMsg = state is AuthError ? state.message : null;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          if (errorMsg != null)
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 14),
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: AppColors.error.withAlpha(20),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: AppColors.error.withAlpha(60)),
+                              ),
+                              child: Row(children: [
+                                Icon(Icons.error_outline, color: AppColors.error, size: 18),
+                                const SizedBox(width: 8),
+                                Expanded(child: Text(errorMsg, style: TextStyle(fontSize: 12, color: AppColors.error))),
+                              ]),
+                            ),
+                          FilledButton(
+                            onPressed: isLoading ? null : _onSubmit,
+                            style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48), backgroundColor: AppColors.primary),
+                            child: isLoading
+                                ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                                : const Text('Baglan', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                          ),
+                        ],
                       );
                     },
                   ),
@@ -106,7 +127,13 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _onSubmit() {
-    if (_formKey.currentState?.validate() ?? false) {
+    debugPrint('LOGIN: _onSubmit called');
+    debugPrint('LOGIN: server=${_serverUrlController.text.trim()}');
+    debugPrint('LOGIN: user=${_usernameController.text.trim()}');
+    debugPrint('LOGIN: pass length=${_passwordController.text.length}');
+    final valid = _formKey.currentState?.validate() ?? false;
+    debugPrint('LOGIN: form valid=$valid');
+    if (valid) {
       context.read<AuthBloc>().add(AuthEvent.login(
         serverUrl: _serverUrlController.text.trim(),
         username: _usernameController.text.trim(),

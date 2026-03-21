@@ -48,13 +48,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _onLogin(AuthLogin event, Emitter<AuthState> emit) async {
     emit(const AuthState.loading());
+    _logger.info('Login attempt: ${event.serverUrl} / ${event.username}');
     final result = await _loginUseCase(LoginParams(serverUrl: event.serverUrl, username: event.username, password: event.password));
     result.fold(
       (failure) {
+        _logger.error('Login failed: ${failure.message} [${failure.code}]');
         _analyticsService.logEvent(AnalyticsEvent.loginFailure, {'error': failure.code ?? 'unknown'});
         emit(AuthState.error(message: failure.message));
       },
       (data) {
+        _logger.info('Login success: ${data.user.username}');
         _analyticsService.logEvent(AnalyticsEvent.loginSuccess);
         _analyticsService.setUserId(data.user.username);
         emit(AuthState.authenticated(user: data.user));

@@ -9,7 +9,6 @@ import 'package:iptv_macos/features/settings/presentation/bloc/settings_cubit.da
 import 'package:iptv_macos/features/settings/presentation/bloc/settings_state.dart';
 import 'package:iptv_macos/features/auth/presentation/pages/login_page.dart';
 import 'package:iptv_macos/app/shell_page.dart';
-import 'package:iptv_macos/main.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -20,20 +19,16 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   late final AuthBloc _authBloc;
   final _settingsCubit = SettingsCubit();
-  late final AppLifecycleObserver _lifecycleObserver;
 
   @override
   void initState() {
     super.initState();
     _authBloc = sl.createAuthBloc();
     _authBloc.add(const AuthEvent.checkAuth());
-    _lifecycleObserver = AppLifecycleObserver();
-    WidgetsBinding.instance.addObserver(_lifecycleObserver);
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(_lifecycleObserver);
     _authBloc.close();
     _settingsCubit.close();
     sl.dispose();
