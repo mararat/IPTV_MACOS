@@ -27,25 +27,10 @@ class _ShellPageState extends State<ShellPage> {
   int? _playerStreamId;
   String? _playerContentType;
   String? _playerTitle;
-  String _playerExtension = 'm3u8';
+  final String _playerExtension = 'm3u8';
 
   void _navigate(String page) => setState(() => _currentPage = page);
   void _goHome() => setState(() => _currentPage = null);
-
-  void _openPlayer({
-    required int streamId,
-    required String contentType,
-    String? title,
-    String extension = 'm3u8',
-  }) {
-    setState(() {
-      _isPlayerOpen = true;
-      _playerStreamId = streamId;
-      _playerContentType = contentType;
-      _playerTitle = title;
-      _playerExtension = extension;
-    });
-  }
 
   void _closePlayer() => setState(() => _isPlayerOpen = false);
 

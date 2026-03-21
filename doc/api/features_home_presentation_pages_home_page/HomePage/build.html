@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the build method from the HomePage class, for the Dart programming language.">
+  <title>build method - HomePage class - home_page library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">iptv_macos</a></li>
+    <li><a href="../../features_home_presentation_pages_home_page/">features&#47;home&#47;presentation&#47;pages&#47;home_page.dart</a></li>
+    <li><a href="../../features_home_presentation_pages_home_page/HomePage-class.html">HomePage</a></li>
+    <li class="self-crumb">build method</li>
+  </ol>
+  <div class="self-name">build</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="features_home_presentation_pages_home_page&#47;HomePage-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">build</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+  <div>
+    <ol class="annotation-list">
+        <li>@<a href="https://api.flutter.dev/flutter/dart-core/override-constant.html">override</a></li>
+    </ol>
+  </div>
+<span class="returntype"><a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a></span>
+<span class="name ">build</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="build-param-context"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/widgets/BuildContext-class.html">BuildContext</a></span> <span class="parameter-name">context</span></span></li>
+</ol>)
+
+      <div class="features"><span class="feature">override</span></div>
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Describes the part of the user interface represented by this widget.</p>
+<p>The framework calls this method when this widget is inserted into the tree
+in a given <a href="https://api.flutter.dev/flutter/widgets/BuildContext-class.html">BuildContext</a> and when the dependencies of this widget change
+(e.g., an <a href="https://api.flutter.dev/flutter/widgets/InheritedWidget-class.html">InheritedWidget</a> referenced by this widget changes). This
+method can potentially be called in every frame and should not have any side
+effects beyond building a widget.</p>
+<p>The framework replaces the subtree below this widget with the widget
+returned by this method, either by updating the existing subtree or by
+removing the subtree and inflating a new subtree, depending on whether the
+widget returned by this method can update the root of the existing
+subtree, as determined by calling <a href="https://api.flutter.dev/flutter/widgets/Widget/canUpdate.html">Widget.canUpdate</a>.</p>
+<p>Typically implementations return a newly created constellation of widgets
+that are configured with information from this widget's constructor and
+from the given <a href="https://api.flutter.dev/flutter/widgets/BuildContext-class.html">BuildContext</a>.</p>
+<p>The given <a href="https://api.flutter.dev/flutter/widgets/BuildContext-class.html">BuildContext</a> contains information about the location in the
+tree at which this widget is being built. For example, the context
+provides the set of inherited widgets for this location in the tree. A
+given widget might be built with multiple different <a href="https://api.flutter.dev/flutter/widgets/BuildContext-class.html">BuildContext</a>
+arguments over time if the widget is moved around the tree or if the
+widget is inserted into the tree in multiple places at once.</p>
+<p>The implementation of this method must only depend on:</p>
+<ul>
+<li>the fields of the widget, which themselves must not change over time,
+and</li>
+<li>any ambient state obtained from the <code>context</code> using
+<a href="https://api.flutter.dev/flutter/widgets/BuildContext/dependOnInheritedWidgetOfExactType.html">BuildContext.dependOnInheritedWidgetOfExactType</a>.</li>
+</ul>
+<p>If a widget's <a href="../../features_home_presentation_pages_home_page/HomePage/build.html">build</a> method is to depend on anything else, use a
+<a href="https://api.flutter.dev/flutter/widgets/StatefulWidget-class.html">StatefulWidget</a> instead.</p>
+<p>See also:</p>
+<ul>
+<li><a href="https://api.flutter.dev/flutter/widgets/StatelessWidget-class.html">StatelessWidget</a>, which contains the discussion on performance considerations.</li>
+</ul>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">@override
+Widget build(BuildContext context) {
+  final cs = Theme.of(context).colorScheme;
+
+  return Column(
+    children: [
+      &#47;&#47; Top bar
+      Container(
+        height: 56,
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        decoration: BoxDecoration(
+          color: cs.surface,
+          border: Border(bottom: BorderSide(color: cs.outlineVariant.withAlpha(40))),
+        ),
+        child: Row(
+          children: [
+            Image.asset(&#39;assets&#47;images&#47;iptv-logo-transparent.png&#39;, width: 28, height: 28),
+            const SizedBox(width: 10),
+            Text(&#39;IPTV Player&#39;, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: cs.primary, letterSpacing: -0.3)),
+            const Spacer(),
+            IconButton(icon: const Icon(Icons.refresh_rounded, size: 20), tooltip: &#39;Yenile&#39;, onPressed: () {
+              context.read&lt;AuthBloc&gt;().add(const AuthEvent.preloadCounts());
+            }),
+            BlocBuilder&lt;SettingsCubit, SettingsState&gt;(
+              builder: (context, s) =&gt; IconButton(
+                icon: Icon(s.isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded, size: 20),
+                tooltip: s.isDarkMode ? &#39;Gündüz Modu&#39; : &#39;Gece Modu&#39;,
+                onPressed: () =&gt; context.read&lt;SettingsCubit&gt;().toggleTheme(),
+              ),
+            ),
+            IconButton(icon: const Icon(Icons.settings_outlined, size: 20), tooltip: &#39;Ayarlar&#39;, onPressed: onSettings),
+            const SizedBox(width: 8),
+            TextButton.icon(
+              icon: const Icon(Icons.logout, size: 18),
+              label: const Text(&#39;Çıkış&#39;),
+              onPressed: () =&gt; context.read&lt;AuthBloc&gt;().add(const AuthEvent.logout()),
+            ),
+          ],
+        ),
+      ),
+
+      &#47;&#47; Cards — centered, compact
+      Expanded(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 900, maxHeight: 280),
+            child: BlocBuilder&lt;AuthBloc, AuthState&gt;(
+              builder: (context, authState) {
+                final liveCount = authState is AuthAuthenticated ? authState.liveCount : 0;
+                final vodCount = authState is AuthAuthenticated ? authState.vodCount : 0;
+                final seriesCount = authState is AuthAuthenticated ? authState.seriesCount : 0;
+
+                return Row(
+                  children: [
+                    Expanded(child: _DashCard(
+                      icon: Icons.live_tv_rounded, title: &#39;Canlı TV&#39;, subtitle: &#39;Canlı yayın kanalları&#39;,
+                      count: liveCount, gradient: const [Color(0xFFE74C3C), Color(0xFFC0392B)],
+                      onTap: () =&gt; onNavigate(&#39;live&#39;),
+                    )),
+                    const SizedBox(width: 18),
+                    Expanded(child: _DashCard(
+                      icon: Icons.movie_rounded, title: &#39;Filmler&#39;, subtitle: &#39;Film arşivi&#39;,
+                      count: vodCount, gradient: const [Color(0xFF2980B9), Color(0xFF1A5276)],
+                      onTap: () =&gt; onNavigate(&#39;vod&#39;),
+                    )),
+                    const SizedBox(width: 18),
+                    Expanded(child: _DashCard(
+                      icon: Icons.tv_rounded, title: &#39;Diziler&#39;, subtitle: &#39;Dizi arşivi&#39;,
+                      count: seriesCount, gradient: const [Color(0xFF1ABC9C), Color(0xFF117A65)],
+                      onTap: () =&gt; onNavigate(&#39;series&#39;),
+                    )),
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+
+      &#47;&#47; Bottom user info bar
+      BlocBuilder&lt;AuthBloc, AuthState&gt;(
+        builder: (context, authState) {
+          if (authState is! AuthAuthenticated) return const SizedBox.shrink();
+          final user = authState.user;
+          final expFormatted = _formatExpDate(user.expDate);
+          final daysLeft = _daysRemaining(user.expDate);
+          final activeCons = int.tryParse(user.activeCons ?? &#39;0&#39;) ?? 0;
+          final maxCons = int.tryParse(user.maxConnections ?? &#39;1&#39;) ?? 1;
+
+          return Container(
+            margin: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            decoration: BoxDecoration(
+              color: cs.surfaceContainerHighest.withAlpha(80),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: cs.outlineVariant.withAlpha(40)),
+            ),
+            child: Row(
+              children: [
+                Container(width: 8, height: 8, decoration: BoxDecoration(color: AppColors.success, shape: BoxShape.circle)),
+                const SizedBox(width: 8),
+                Text(&#39;Bağlı&#39;, style: TextStyle(fontSize: 12, color: AppColors.success, fontWeight: FontWeight.w600)),
+                _sep(cs), Icon(Icons.person, size: 14, color: cs.primary), const SizedBox(width: 4),
+                Text(user.username, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: cs.onSurface)),
+                _sep(cs), Icon(Icons.calendar_today, size: 13, color: cs.onSurfaceVariant), const SizedBox(width: 4),
+                Text(expFormatted, style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant)),
+                if (daysLeft &gt;= 0) ...[
+                  const SizedBox(width: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(color: daysLeft &lt; 30 ? AppColors.warning.withAlpha(30) : AppColors.success.withAlpha(30), borderRadius: BorderRadius.circular(6)),
+                    child: Text(&#39;$daysLeft gün&#39;, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: daysLeft &lt; 30 ? AppColors.warning : AppColors.success)),
+                  ),
+                ],
+                _sep(cs), Icon(Icons.devices, size: 13, color: cs.onSurfaceVariant), const SizedBox(width: 4),
+                Text(&#39;$activeCons &#47; $maxCons&#39;, style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant)),
+                const Spacer(),
+                if (user.isTrial == &#39;1&#39;)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                    decoration: BoxDecoration(color: AppColors.warning.withAlpha(30), borderRadius: BorderRadius.circular(6)),
+                    child: Text(&#39;Deneme&#39;, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.warning)),
+                  )
+                else
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                    decoration: BoxDecoration(color: AppColors.success.withAlpha(30), borderRadius: BorderRadius.circular(6)),
+                    child: Text(&#39;Aktif&#39;, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.success)),
+                  ),
+              ],
+            ),
+          );
+        },
+      ),
+    ],
+  );
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">iptv_macos</a></li>
+    <li><a href="../../features_home_presentation_pages_home_page/">home_page</a></li>
+    <li><a href="../../features_home_presentation_pages_home_page/HomePage-class.html">HomePage</a></li>
+    <li class="self-crumb">build method</li>
+</ol>
+
+    <h5>HomePage class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    iptv_macos
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:media_kit/media_kit.dart' hide PlayerState;
 import 'package:media_kit_video/media_kit_video.dart';
-import 'package:iptv_macos/core/di/service_locator.dart';
 import 'package:iptv_macos/core/theme/app_colors.dart';
 import 'package:iptv_macos/features/player/domain/entities/content_type.dart';
 import 'package:iptv_macos/features/player/presentation/bloc/player_bloc.dart';

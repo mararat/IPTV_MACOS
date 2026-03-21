@@ -289,13 +289,13 @@ class _LiveChannelsPageState extends State<LiveChannelsPage> {
                               PopupMenuButton<double>(
                                 tooltip: 'Hız',
                                 offset: const Offset(0, -200),
+                                itemBuilder: (_) => [0.5, 0.75, 1.0, 1.25, 1.5, 2.0].map((s) => PopupMenuItem(value: s, child: Text('${s}x', style: TextStyle(fontWeight: s == _speed ? FontWeight.bold : FontWeight.normal)))).toList(),
+                                onSelected: _setSpeed,
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                                   decoration: BoxDecoration(color: Colors.white.withAlpha(20), borderRadius: BorderRadius.circular(4)),
                                   child: Text('${_speed}x', style: const TextStyle(color: Colors.white, fontSize: 12)),
                                 ),
-                                itemBuilder: (_) => [0.5, 0.75, 1.0, 1.25, 1.5, 2.0].map((s) => PopupMenuItem(value: s, child: Text('${s}x', style: TextStyle(fontWeight: s == _speed ? FontWeight.bold : FontWeight.normal)))).toList(),
-                                onSelected: _setSpeed,
                               ),
                               const SizedBox(width: 8),
                               // Fullscreen
@@ -393,10 +393,10 @@ class _LiveChannelsPageState extends State<LiveChannelsPage> {
                         PopupMenuButton<double>(
                           tooltip: 'Hız',
                           offset: const Offset(0, -200),
-                          child: Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), decoration: BoxDecoration(color: Colors.white.withAlpha(20), borderRadius: BorderRadius.circular(6)),
-                            child: Text('${_speed}x', style: const TextStyle(color: Colors.white, fontSize: 13))),
                           itemBuilder: (_) => [0.5, 0.75, 1.0, 1.25, 1.5, 2.0].map((s) => PopupMenuItem(value: s, child: Text('${s}x', style: TextStyle(fontWeight: s == _speed ? FontWeight.bold : FontWeight.normal)))).toList(),
                           onSelected: _setSpeed,
+                          child: Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), decoration: BoxDecoration(color: Colors.white.withAlpha(20), borderRadius: BorderRadius.circular(6)),
+                            child: Text('${_speed}x', style: const TextStyle(color: Colors.white, fontSize: 13))),
                         ),
                       ],
                     ),

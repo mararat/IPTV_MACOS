@@ -197,6 +197,7 @@ class _DashCardState extends State<_DashCard> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeOut,
+          // ignore: deprecated_member_use
           transform: _hovered ? (Matrix4.identity()..scale(1.02)) : Matrix4.identity(),
           transformAlignment: Alignment.center,
           decoration: BoxDecoration(

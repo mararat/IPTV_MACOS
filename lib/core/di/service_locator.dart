@@ -110,7 +110,7 @@ class ServiceLocator {
 
     // Catalog
     catalogRemoteDataSource = CatalogRemoteDataSourceImpl(xtreamApi);
-    catalogRepository = CatalogRepositoryMacImpl(catalogRemoteDataSource, networkInfo, logger, xtreamApi);
+    catalogRepository = CatalogRepositoryMacImpl(catalogRemoteDataSource, networkInfo);
     getCategoriesUseCase = GetCategoriesUseCase(catalogRepository);
     getChannelsUseCase = GetChannelsUseCase(catalogRepository);
     getVodListUseCase = GetVodListUseCase(catalogRepository);

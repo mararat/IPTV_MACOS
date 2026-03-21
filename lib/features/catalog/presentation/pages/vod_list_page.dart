@@ -53,7 +53,7 @@ class _VodListPageState extends State<VodListPage> {
   @override
   void dispose() {
     _hideTimer?.cancel();
-    for (final s in _subs) s.cancel();
+    for (final s in _subs) { s.cancel(); }
     _player?.dispose();
     _searchController.dispose();
     super.dispose();
@@ -61,17 +61,17 @@ class _VodListPageState extends State<VodListPage> {
 
   void _computeCounts(List<VodEntity> items) {
     final counts = <String, int>{};
-    for (final item in items) counts[item.categoryId ?? ''] = (counts[item.categoryId ?? ''] ?? 0) + 1;
-    if (mounted) setState(() => _catCounts = counts);
+    for (final item in items) { counts[item.categoryId ?? ''] = (counts[item.categoryId ?? ''] ?? 0) + 1; }
+    if (mounted) { setState(() => _catCounts = counts); }
   }
 
   void _playVod(VodEntity vod) {
     if (_activeVod?.id == vod.id) return;
-    for (final s in _subs) s.cancel();
+    for (final s in _subs) { s.cancel(); }
     _subs.clear();
     _player?.dispose();
 
-    final url = sl.xtreamApi.vodStreamUrl(vod.streamId ?? 0, vod.containerExtension ?? 'mp4');
+    final url = sl.xtreamApi.vodStreamUrl(vod.streamId, vod.containerExtension ?? 'mp4');
     _player = mk.Player(configuration: const mk.PlayerConfiguration(bufferSize: 64 * 1024 * 1024, logLevel: mk.MPVLogLevel.warn));
     _videoController = VideoController(_player!);
 
@@ -81,10 +81,12 @@ class _VodListPageState extends State<VodListPage> {
     _subs.add(_player!.stream.playing.listen((p) { if (mounted) setState(() => _isPlaying = p); }));
     _subs.add(_player!.stream.buffering.listen((b) { if (mounted) setState(() => _isBuffering = b); }));
     _subs.add(_player!.stream.tracks.listen((t) {
-      if (mounted) setState(() {
-        _audioTracks = t.audio.where((a) => a.id != 'auto' && a.id != 'no').toList();
-        _subtitleTracks = t.subtitle.where((s) => s.id != 'auto' && s.id != 'no').toList();
-      });
+      if (mounted) {
+        setState(() {
+          _audioTracks = t.audio.where((a) => a.id != 'auto' && a.id != 'no').toList();
+          _subtitleTracks = t.subtitle.where((s) => s.id != 'auto' && s.id != 'no').toList();
+        });
+      }
     }));
 
     _player!.open(mk.Media(url));
@@ -94,7 +96,7 @@ class _VodListPageState extends State<VodListPage> {
   }
 
   void _stopPlayer() {
-    for (final s in _subs) s.cancel();
+    for (final s in _subs) { s.cancel(); }
     _subs.clear();
     _player?.dispose(); _player = null; _videoController = null;
     setState(() { _activeVod = null; _position = Duration.zero; _duration = Duration.zero; });

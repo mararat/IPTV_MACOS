@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:iptv_macos/core/extensions/context_extensions.dart';
 import 'package:iptv_macos/core/theme/app_colors.dart';
 import 'package:iptv_macos/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:iptv_macos/features/auth/presentation/bloc/auth_event.dart';

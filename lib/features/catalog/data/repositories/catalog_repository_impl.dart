@@ -1,8 +1,6 @@
 import 'package:iptv_macos/core/error/error_handler.dart';
 import 'package:iptv_macos/core/error/failures.dart';
-import 'package:iptv_macos/core/logging/app_logger.dart';
 import 'package:iptv_macos/core/network/network_info.dart';
-import 'package:iptv_macos/core/network/xtream_api_service.dart';
 import 'package:iptv_macos/core/utils/typedefs.dart';
 import 'package:iptv_macos/features/catalog/data/datasources/catalog_remote_datasource.dart';
 import 'package:iptv_macos/features/catalog/data/models/category_model.dart';
@@ -14,12 +12,10 @@ import 'package:iptv_macos/features/catalog/domain/entities/vod_entity.dart';
 import 'package:iptv_macos/features/catalog/domain/repositories/catalog_repository.dart';
 
 class CatalogRepositoryMacImpl implements CatalogRepository {
-  const CatalogRepositoryMacImpl(this._remoteDataSource, this._networkInfo, this._logger, this._xtreamApi);
+  const CatalogRepositoryMacImpl(this._remoteDataSource, this._networkInfo);
 
   final CatalogRemoteDataSource _remoteDataSource;
   final NetworkInfo _networkInfo;
-  final AppLogger _logger;
-  final XtreamApiService _xtreamApi;
 
   @override
   ResultFuture<List<CategoryEntity>> getLiveCategories() async {

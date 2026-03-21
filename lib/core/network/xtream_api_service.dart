@@ -245,7 +245,7 @@ class XtreamApiService {
 
   Future<Map<String, dynamic>> getVodInfo(int vodId) async {
     try {
-      final url = _buildUrl('get_vod_info') + '&vod_id=$vodId';
+      final url = '${_buildUrl('get_vod_info')}&vod_id=$vodId';
       final response = await _dio.get<Map<String, dynamic>>(url);
       return response.data ?? {};
     } on DioException catch (e) {
@@ -276,7 +276,7 @@ class XtreamApiService {
 
   Future<Map<String, dynamic>> getSeriesInfo(int seriesId) async {
     try {
-      final url = _buildUrl('get_series_info') + '&series_id=$seriesId';
+      final url = '${_buildUrl('get_series_info')}&series_id=$seriesId';
       final response = await _dio.get<Map<String, dynamic>>(url);
       return response.data ?? {};
     } on DioException catch (e) {
@@ -287,7 +287,7 @@ class XtreamApiService {
   // ── EPG ──
   Future<Map<String, dynamic>> getShortEpg(int streamId, {int limit = 4}) async {
     try {
-      final url = _buildUrl('get_short_epg') + '&stream_id=$streamId&limit=$limit';
+      final url = '${_buildUrl('get_short_epg')}&stream_id=$streamId&limit=$limit';
       final response = await _dio.get<Map<String, dynamic>>(url);
       return response.data ?? {};
     } on DioException catch (e) {
@@ -297,7 +297,7 @@ class XtreamApiService {
 
   Future<Map<String, dynamic>> getSimpleDataTable(int streamId) async {
     try {
-      final url = _buildUrl('get_simple_data_table') + '&stream_id=$streamId';
+      final url = '${_buildUrl('get_simple_data_table')}&stream_id=$streamId';
       final response = await _dio.get<Map<String, dynamic>>(url);
       return response.data ?? {};
     } on DioException catch (e) {

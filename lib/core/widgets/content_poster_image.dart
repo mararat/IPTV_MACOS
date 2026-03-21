@@ -49,7 +49,7 @@ class ContentPosterImage extends StatelessWidget {
           ),
         );
       },
-      errorBuilder: (_, __, ___) => _fallback(colorScheme, color),
+      errorBuilder: (_, e, st) => _fallback(colorScheme, color),
     );
   }
 

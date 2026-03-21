@@ -60,7 +60,7 @@ class _SeriesListPageState extends State<SeriesListPage> {
   @override
   void dispose() {
     _hideTimer?.cancel();
-    for (final s in _subs) s.cancel();
+    for (final s in _subs) { s.cancel(); }
     _player?.dispose();
     _searchController.dispose();
     super.dispose();
@@ -68,7 +68,7 @@ class _SeriesListPageState extends State<SeriesListPage> {
 
   void _computeCounts(List<SeriesEntity> items) {
     final counts = <String, int>{};
-    for (final s in items) counts[s.categoryId ?? ''] = (counts[s.categoryId ?? ''] ?? 0) + 1;
+    for (final s in items) { counts[s.categoryId ?? ''] = (counts[s.categoryId ?? ''] ?? 0) + 1; }
     _catCounts = counts;
   }
 
@@ -79,7 +79,7 @@ class _SeriesListPageState extends State<SeriesListPage> {
 
   void _playEpisode(EpisodeEntity ep) {
     if (_playingEpisode?.id == ep.id) return;
-    for (final s in _subs) s.cancel();
+    for (final s in _subs) { s.cancel(); }
     _subs.clear();
     _player?.dispose();
 
@@ -94,10 +94,12 @@ class _SeriesListPageState extends State<SeriesListPage> {
     _subs.add(_player!.stream.playing.listen((p) { if (mounted) setState(() => _isPlaying = p); }));
     _subs.add(_player!.stream.buffering.listen((b) { if (mounted) setState(() => _isBuffering = b); }));
     _subs.add(_player!.stream.tracks.listen((t) {
-      if (mounted) setState(() {
-        _audioTracks = t.audio.where((a) => a.id != 'auto' && a.id != 'no').toList();
-        _subtitleTracks = t.subtitle.where((s) => s.id != 'auto' && s.id != 'no').toList();
-      });
+      if (mounted) {
+        setState(() {
+          _audioTracks = t.audio.where((a) => a.id != 'auto' && a.id != 'no').toList();
+          _subtitleTracks = t.subtitle.where((s) => s.id != 'auto' && s.id != 'no').toList();
+        });
+      }
     }));
 
     _player!.open(mk.Media(url));
@@ -108,7 +110,7 @@ class _SeriesListPageState extends State<SeriesListPage> {
   }
 
   void _stopPlayer() {
-    for (final s in _subs) s.cancel();
+    for (final s in _subs) { s.cancel(); }
     _subs.clear();
     _player?.dispose(); _player = null; _videoController = null;
     setState(() { _playingEpisode = null; _position = Duration.zero; _duration = Duration.zero; });
