@@ -13,10 +13,23 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _serverUrlController = TextEditingController();
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _serverUrlController = TextEditingController(text: 'http://tinyurlatlas02.xyz:8080');
+  final _usernameController = TextEditingController(text: 'mararat06178');
+  final _passwordController = TextEditingController(text: 'haiBVOAx6D');
   bool _obscurePassword = true;
+  bool _autoLoginAttempted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Auto-login on first build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_autoLoginAttempted) {
+        _autoLoginAttempted = true;
+        _onSubmit();
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -127,12 +140,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _onSubmit() {
-    debugPrint('LOGIN: _onSubmit called');
-    debugPrint('LOGIN: server=${_serverUrlController.text.trim()}');
-    debugPrint('LOGIN: user=${_usernameController.text.trim()}');
-    debugPrint('LOGIN: pass length=${_passwordController.text.length}');
     final valid = _formKey.currentState?.validate() ?? false;
-    debugPrint('LOGIN: form valid=$valid');
     if (valid) {
       context.read<AuthBloc>().add(AuthEvent.login(
         serverUrl: _serverUrlController.text.trim(),
