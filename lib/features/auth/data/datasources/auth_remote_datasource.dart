@@ -38,7 +38,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       rethrow;
     } catch (e) {
       throw ServerException(
-        message: 'Login failed: ${e.toString()}',
+        message: 'Giriş başarısız: $e',
       );
     }
   }
