@@ -11,7 +11,8 @@ import 'package:iptv_macos/features/catalog/presentation/bloc/catalog_event.dart
 import 'package:iptv_macos/features/catalog/presentation/bloc/catalog_state.dart';
 
 class LiveChannelsPage extends StatefulWidget {
-  const LiveChannelsPage({super.key});
+  const LiveChannelsPage({super.key, this.onBack});
+  final VoidCallback? onBack;
   @override
   State<LiveChannelsPage> createState() => _LiveChannelsPageState();
 }
@@ -46,7 +47,9 @@ class _LiveChannelsPageState extends State<LiveChannelsPage> {
               ),
               child: Row(
                 children: [
-                  Text('Canli TV', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: cs.onSurface)),
+                  if (widget.onBack != null)
+                    IconButton(icon: const Icon(Icons.arrow_back_rounded, size: 20), onPressed: widget.onBack, tooltip: 'Ana Sayfa'),
+                  Text('Canlı TV', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: cs.onSurface)),
                   const SizedBox(width: 20),
                   // Search
                   SizedBox(

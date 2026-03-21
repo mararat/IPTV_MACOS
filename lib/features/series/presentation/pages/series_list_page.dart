@@ -10,7 +10,8 @@ import 'package:iptv_macos/features/series/presentation/bloc/series_event.dart';
 import 'package:iptv_macos/features/series/presentation/bloc/series_state.dart';
 
 class SeriesListPage extends StatefulWidget {
-  const SeriesListPage({super.key});
+  const SeriesListPage({super.key, this.onBack});
+  final VoidCallback? onBack;
   @override
   State<SeriesListPage> createState() => _SeriesListPageState();
 }
@@ -39,6 +40,8 @@ class _SeriesListPageState extends State<SeriesListPage> {
               decoration: BoxDecoration(color: cs.surface, border: Border(bottom: BorderSide(color: cs.outlineVariant.withAlpha(50)))),
               child: Row(
                 children: [
+                  if (widget.onBack != null)
+                    IconButton(icon: const Icon(Icons.arrow_back_rounded, size: 20), onPressed: widget.onBack, tooltip: 'Ana Sayfa'),
                   Text('Diziler', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: cs.onSurface)),
                   const SizedBox(width: 20),
                   SizedBox(

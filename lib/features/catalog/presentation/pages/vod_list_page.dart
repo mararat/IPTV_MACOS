@@ -11,7 +11,8 @@ import 'package:iptv_macos/features/catalog/presentation/bloc/vod_event.dart';
 import 'package:iptv_macos/features/catalog/presentation/bloc/vod_state.dart';
 
 class VodListPage extends StatefulWidget {
-  const VodListPage({super.key});
+  const VodListPage({super.key, this.onBack});
+  final VoidCallback? onBack;
   @override
   State<VodListPage> createState() => _VodListPageState();
 }
@@ -40,6 +41,8 @@ class _VodListPageState extends State<VodListPage> {
               decoration: BoxDecoration(color: cs.surface, border: Border(bottom: BorderSide(color: cs.outlineVariant.withAlpha(50)))),
               child: Row(
                 children: [
+                  if (widget.onBack != null)
+                    IconButton(icon: const Icon(Icons.arrow_back_rounded, size: 20), onPressed: widget.onBack, tooltip: 'Ana Sayfa'),
                   Text('Filmler', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: cs.onSurface)),
                   const SizedBox(width: 20),
                   SizedBox(

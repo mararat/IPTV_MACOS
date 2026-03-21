@@ -8,8 +8,9 @@ import 'package:iptv_macos/features/settings/presentation/bloc/settings_cubit.da
 import 'package:iptv_macos/features/settings/presentation/bloc/settings_state.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key, required this.onNavigate});
-  final ValueChanged<int> onNavigate;
+  const HomePage({super.key, required this.onNavigate, this.onSettings});
+  final ValueChanged<String> onNavigate;
+  final VoidCallback? onSettings;
 
   String _formatExpDate(String? expDate) {
     if (expDate == null || expDate.isEmpty) return 'Belirsiz';
@@ -61,7 +62,7 @@ class HomePage extends StatelessWidget {
                   onPressed: () => context.read<SettingsCubit>().toggleTheme(),
                 ),
               ),
-              IconButton(icon: const Icon(Icons.settings_outlined, size: 20), tooltip: 'Ayarlar', onPressed: () => onNavigate(4)),
+              IconButton(icon: const Icon(Icons.settings_outlined, size: 20), tooltip: 'Ayarlar', onPressed: onSettings),
               const SizedBox(width: 8),
               TextButton.icon(
                 icon: const Icon(Icons.logout, size: 18),
@@ -88,19 +89,19 @@ class HomePage extends StatelessWidget {
                       Expanded(child: _DashCard(
                         icon: Icons.live_tv_rounded, title: 'Canlı TV', subtitle: 'Canlı yayın kanalları',
                         count: liveCount, gradient: const [Color(0xFFE74C3C), Color(0xFFC0392B)],
-                        onTap: () => onNavigate(1),
+                        onTap: () => onNavigate('live'),
                       )),
                       const SizedBox(width: 18),
                       Expanded(child: _DashCard(
                         icon: Icons.movie_rounded, title: 'Filmler', subtitle: 'Film arşivi',
                         count: vodCount, gradient: const [Color(0xFF2980B9), Color(0xFF1A5276)],
-                        onTap: () => onNavigate(2),
+                        onTap: () => onNavigate('vod'),
                       )),
                       const SizedBox(width: 18),
                       Expanded(child: _DashCard(
                         icon: Icons.tv_rounded, title: 'Diziler', subtitle: 'Dizi arşivi',
                         count: seriesCount, gradient: const [Color(0xFF1ABC9C), Color(0xFF117A65)],
-                        onTap: () => onNavigate(3),
+                        onTap: () => onNavigate('series'),
                       )),
                     ],
                   );
