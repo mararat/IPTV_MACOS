@@ -5,6 +5,7 @@ import 'package:iptv_macos/core/widgets/content_poster_image.dart';
 import 'package:iptv_macos/core/widgets/empty_state_widget.dart';
 import 'package:iptv_macos/core/widgets/error_widget.dart';
 import 'package:iptv_macos/core/widgets/loading_widget.dart';
+import 'package:iptv_macos/features/series/domain/entities/series_entity.dart';
 import 'package:iptv_macos/features/series/presentation/bloc/series_bloc.dart';
 import 'package:iptv_macos/features/series/presentation/bloc/series_event.dart';
 import 'package:iptv_macos/features/series/presentation/bloc/series_state.dart';
@@ -19,6 +20,7 @@ class SeriesListPage extends StatefulWidget {
 class _SeriesListPageState extends State<SeriesListPage> {
   Map<String, int> _catCounts = {};
   final _searchController = TextEditingController();
+  bool _didInit = false;
 
   @override
   void initState() {
@@ -26,6 +28,9 @@ class _SeriesListPageState extends State<SeriesListPage> {
     final bloc = context.read<SeriesBloc>();
     if (bloc.state.seriesList.isEmpty) {
       bloc..add(const SeriesEvent.loadCategories())..add(const SeriesEvent.loadSeries());
+    } else {
+      // Veriler zaten yüklü — sayıları hesapla
+      _computeCounts(bloc.state.seriesList);
     }
   }
 
@@ -35,13 +40,15 @@ class _SeriesListPageState extends State<SeriesListPage> {
     super.dispose();
   }
 
-  void _computeCounts(List items) {
+  void _computeCounts(List<SeriesEntity> items) {
     final counts = <String, int>{};
     for (final s in items) {
-      final cid = s.categoryId?.toString() ?? '';
+      final cid = s.categoryId ?? '';
       counts[cid] = (counts[cid] ?? 0) + 1;
     }
-    if (mounted) setState(() => _catCounts = counts);
+    _catCounts = counts;
+    if (mounted && _didInit) setState(() {});
+    _didInit = true;
   }
 
   @override
@@ -50,13 +57,14 @@ class _SeriesListPageState extends State<SeriesListPage> {
 
     return BlocConsumer<SeriesBloc, SeriesState>(
       listener: (context, state) {
-        if (!state.isLoading && state.seriesList.isNotEmpty && _catCounts.isEmpty && state.selectedCategoryId == null) {
+        if (!state.isLoading && state.seriesList.isNotEmpty && state.selectedCategoryId == null) {
           _computeCounts(state.seriesList);
         }
       },
       builder: (context, state) {
         return Column(
           children: [
+            // Header
             Container(
               height: 46,
               padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -73,40 +81,61 @@ class _SeriesListPageState extends State<SeriesListPage> {
             Expanded(
               child: Row(
                 children: [
+                  // Sidebar
                   Container(
                     width: 200,
                     decoration: BoxDecoration(color: AppColors.primary, border: Border(right: BorderSide(color: AppColors.primaryDark))),
                     child: Column(
                       children: [
-                        _CatTile(label: 'Tümü', count: null, selected: state.selectedCategoryId == null, onTap: () => context.read<SeriesBloc>().add(const SeriesEvent.loadSeries())),
+                        _CatTile(label: 'Tümü', count: null, selected: state.selectedCategoryId == null,
+                          onTap: () => context.read<SeriesBloc>().add(const SeriesEvent.loadSeries())),
                         Divider(height: 1, color: Colors.white.withAlpha(20)),
                         Expanded(child: ListView.builder(
                           itemCount: state.categories.length,
                           itemBuilder: (_, i) {
                             final c = state.categories[i];
-                            return _CatTile(label: c.name, count: _catCounts[c.id], selected: c.id == state.selectedCategoryId, onTap: () => context.read<SeriesBloc>().add(SeriesEvent.loadSeries(categoryId: c.id)));
+                            return _CatTile(
+                              label: c.name,
+                              count: _catCounts[c.id],
+                              selected: c.id == state.selectedCategoryId,
+                              onTap: () => context.read<SeriesBloc>().add(SeriesEvent.loadSeries(categoryId: c.id)),
+                            );
                           },
                         )),
                       ],
                     ),
                   ),
+                  // Content
                   Expanded(
                     child: Column(
                       children: [
+                        // Search
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(border: Border(bottom: BorderSide(color: cs.outlineVariant.withAlpha(30)))),
                           child: TextField(
                             controller: _searchController,
                             style: const TextStyle(fontSize: 12),
-                            decoration: InputDecoration(hintText: 'Dizi ara...', prefixIcon: const Icon(Icons.search, size: 18), isDense: true,
+                            decoration: InputDecoration(
+                              hintText: 'Dizi ara...', prefixIcon: const Icon(Icons.search, size: 18), isDense: true,
                               contentPadding: const EdgeInsets.symmetric(vertical: 8),
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: cs.outlineVariant.withAlpha(50))),
                               enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: cs.outlineVariant.withAlpha(50))),
-                              suffixIcon: _searchController.text.isNotEmpty ? IconButton(icon: const Icon(Icons.close, size: 16), onPressed: () { _searchController.clear(); context.read<SeriesBloc>().add(const SeriesEvent.searchSeries(query: '')); setState(() {}); }) : null),
-                            onChanged: (q) { context.read<SeriesBloc>().add(SeriesEvent.searchSeries(query: q)); setState(() {}); },
+                              suffixIcon: _searchController.text.isNotEmpty
+                                ? IconButton(icon: const Icon(Icons.close, size: 16), onPressed: () {
+                                    _searchController.clear();
+                                    context.read<SeriesBloc>().add(const SeriesEvent.searchSeries(query: ''));
+                                    setState(() {});
+                                  })
+                                : null,
+                            ),
+                            onChanged: (q) {
+                              context.read<SeriesBloc>().add(SeriesEvent.searchSeries(query: q));
+                              setState(() {});
+                            },
                           ),
                         ),
+                        // Grid
                         Expanded(child: _buildGrid(state, cs)),
                       ],
                     ),
@@ -129,17 +158,14 @@ class _SeriesListPageState extends State<SeriesListPage> {
       padding: const EdgeInsets.all(14),
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 150, childAspectRatio: 0.55, mainAxisSpacing: 10, crossAxisSpacing: 10),
       itemCount: state.seriesList.length,
-      itemBuilder: (_, i) {
-        final s = state.seriesList[i];
-        return _SeriesCard(series: s);
-      },
+      itemBuilder: (_, i) => _SeriesCard(series: state.seriesList[i]),
     );
   }
 }
 
 class _SeriesCard extends StatefulWidget {
   const _SeriesCard({required this.series});
-  final dynamic series;
+  final SeriesEntity series;
   @override
   State<_SeriesCard> createState() => _SeriesCardState();
 }
@@ -149,36 +175,39 @@ class _SeriesCardState extends State<_SeriesCard> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final s = widget.series;
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
-        onTap: () {},
+        onTap: () {
+          // TODO: dizi detay sayfası
+        },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: Stack(fit: StackFit.expand, children: [
-                ClipRRect(borderRadius: BorderRadius.circular(8), child: ContentPosterImage(imageUrl: s.cover, fallbackIcon: Icons.tv)),
+                ClipRRect(borderRadius: BorderRadius.circular(8), child: ContentPosterImage(imageUrl: widget.series.cover, fallbackIcon: Icons.tv)),
                 if (_hovered)
-                  Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.black38),
-                    child: const Center(child: Icon(Icons.info_outline, color: Colors.white, size: 32))),
-                if (s.rating != null && s.rating! > 0)
+                  Container(
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: Colors.black38),
+                    child: const Center(child: Icon(Icons.info_outline, color: Colors.white, size: 32)),
+                  ),
+                if (widget.series.rating != null && widget.series.rating! > 0)
                   Positioned(top: 4, right: 4, child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                     decoration: BoxDecoration(color: Colors.black87, borderRadius: BorderRadius.circular(4)),
                     child: Row(mainAxisSize: MainAxisSize.min, children: [
                       const Icon(Icons.star_rounded, color: Colors.amber, size: 12),
                       const SizedBox(width: 2),
-                      Text(s.rating!.toStringAsFixed(1), style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600)),
+                      Text(widget.series.rating!.toStringAsFixed(1), style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600)),
                     ]),
                   )),
               ]),
             ),
             const SizedBox(height: 4),
-            Text(s.name, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: cs.onSurface)),
+            Text(widget.series.name, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: cs.onSurface)),
           ],
         ),
       ),
@@ -198,9 +227,14 @@ class _CatTile extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
           decoration: BoxDecoration(border: Border(left: BorderSide(color: selected ? Colors.white : Colors.transparent, width: 3))),
           child: Row(children: [
-            Expanded(child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 13, fontWeight: selected ? FontWeight.w600 : FontWeight.w400, color: selected ? Colors.white : Colors.white.withAlpha(200)))),
-            if (count != null) Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1), decoration: BoxDecoration(color: Colors.white.withAlpha(18), borderRadius: BorderRadius.circular(4)),
-              child: Text('$count', style: TextStyle(fontSize: 10, color: Colors.white.withAlpha(170)))),
+            Expanded(child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 13, fontWeight: selected ? FontWeight.w600 : FontWeight.w400, color: selected ? Colors.white : Colors.white.withAlpha(200)))),
+            if (count != null)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                decoration: BoxDecoration(color: Colors.white.withAlpha(18), borderRadius: BorderRadius.circular(4)),
+                child: Text('$count', style: TextStyle(fontSize: 10, color: Colors.white.withAlpha(170))),
+              ),
           ]),
         ),
       ),
