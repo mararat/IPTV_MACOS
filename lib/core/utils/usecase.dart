@@ -8,10 +8,6 @@ abstract class UseCaseNoParams<T> {
   ResultFuture<T> call();
 }
 
-abstract class StreamUseCase<T, Params> {
-  ResultStream<T> call(Params params);
-}
-
 class NoParams {
   const NoParams();
 }

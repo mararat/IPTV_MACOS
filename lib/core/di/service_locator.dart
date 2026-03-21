@@ -4,9 +4,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:iptv_macos/core/logging/app_logger.dart';
 import 'package:iptv_macos/core/logging/analytics_service.dart';
 import 'package:iptv_macos/core/network/dio_client.dart';
-import 'package:iptv_macos/core/network/interceptors/auth_interceptor.dart';
-import 'package:iptv_macos/core/network/interceptors/correlation_id_interceptor.dart';
-import 'package:iptv_macos/core/network/interceptors/retry_interceptor.dart';
 import 'package:iptv_macos/core/network/network_info.dart';
 import 'package:iptv_macos/core/network/xtream_api_service.dart';
 import 'package:iptv_macos/core/services/watch_history_service.dart';
@@ -95,10 +92,7 @@ class ServiceLocator {
     xtreamApi = XtreamApiService(dio);
     watchHistoryService = WatchHistoryService(secureStorage);
 
-    final authInterceptor = AuthInterceptor();
-    final correlationIdInterceptor = CorrelationIdInterceptor();
-    final retryInterceptor = RetryInterceptor(dio);
-    dioClient = DioClient(dio, talker, authInterceptor, correlationIdInterceptor, retryInterceptor);
+    dioClient = DioClient(dio, talker);
 
     // Auth
     authLocalDataSource = AuthLocalDataSourceImpl(secureStorage);
@@ -131,7 +125,7 @@ class ServiceLocator {
 
   AuthBloc createAuthBloc() => AuthBloc(
     loginUseCase, logoutUseCase, checkAuthUseCase,
-    authRepository, xtreamApi, analyticsService, null, logger,
+    authRepository, xtreamApi, analyticsService, logger,
   );
 
   /// Clean up all resources on app exit.

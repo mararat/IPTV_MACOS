@@ -54,13 +54,6 @@ class AuthFailure extends Failure {
   });
 }
 
-class SessionExpiredFailure extends Failure {
-  const SessionExpiredFailure({
-    super.message = 'Session expired. Please login again.',
-    super.code = 'SESSION_EXPIRED',
-  });
-}
-
 class ValidationFailure extends Failure {
   const ValidationFailure({
     required super.message,

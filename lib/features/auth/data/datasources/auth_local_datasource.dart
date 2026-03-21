@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:iptv_macos/core/error/exceptions.dart';
 
 abstract class AuthLocalDataSource {
@@ -18,14 +18,14 @@ abstract class AuthLocalDataSource {
 }
 
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
-  AuthLocalDataSourceImpl(dynamic _);
+  AuthLocalDataSourceImpl(this._storage);
+
+  final FlutterSecureStorage _storage;
 
   static const _serverUrlKey = 'xtream_server_url';
   static const _usernameKey = 'xtream_username';
   static const _passwordKey = 'xtream_password';
   static const _userKey = 'cached_user';
-
-  Future<SharedPreferences> get _prefs => SharedPreferences.getInstance();
 
   @override
   Future<void> saveCredentials({
@@ -34,40 +34,29 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     required String password,
   }) async {
     try {
-      final prefs = await _prefs;
-      await prefs.setString(_serverUrlKey, serverUrl);
-      await prefs.setString(_usernameKey, username);
-      await prefs.setString(_passwordKey, password);
+      await _storage.write(key: _serverUrlKey, value: serverUrl);
+      await _storage.write(key: _usernameKey, value: username);
+      await _storage.write(key: _passwordKey, value: password);
     } catch (e) {
       throw const CacheException(message: 'Failed to save credentials');
     }
   }
 
   @override
-  Future<String?> getServerUrl() async {
-    final prefs = await _prefs;
-    return prefs.getString(_serverUrlKey);
-  }
+  Future<String?> getServerUrl() => _storage.read(key: _serverUrlKey);
 
   @override
-  Future<String?> getUsername() async {
-    final prefs = await _prefs;
-    return prefs.getString(_usernameKey);
-  }
+  Future<String?> getUsername() => _storage.read(key: _usernameKey);
 
   @override
-  Future<String?> getPassword() async {
-    final prefs = await _prefs;
-    return prefs.getString(_passwordKey);
-  }
+  Future<String?> getPassword() => _storage.read(key: _passwordKey);
 
   @override
   Future<bool> hasCredentials() async {
     try {
-      final prefs = await _prefs;
-      final serverUrl = prefs.getString(_serverUrlKey);
-      final username = prefs.getString(_usernameKey);
-      final password = prefs.getString(_passwordKey);
+      final serverUrl = await _storage.read(key: _serverUrlKey);
+      final username = await _storage.read(key: _usernameKey);
+      final password = await _storage.read(key: _passwordKey);
       return serverUrl != null && serverUrl.isNotEmpty &&
           username != null && username.isNotEmpty &&
           password != null && password.isNotEmpty;
@@ -79,8 +68,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<void> saveUser(Map<String, dynamic> user) async {
     try {
-      final prefs = await _prefs;
-      await prefs.setString(_userKey, jsonEncode(user));
+      await _storage.write(key: _userKey, value: jsonEncode(user));
     } catch (e) {
       throw const CacheException(message: 'Failed to save user');
     }
@@ -89,8 +77,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<Map<String, dynamic>?> getCachedUser() async {
     try {
-      final prefs = await _prefs;
-      final encoded = prefs.getString(_userKey);
+      final encoded = await _storage.read(key: _userKey);
       if (encoded == null) return null;
       return Map<String, dynamic>.from(jsonDecode(encoded) as Map);
     } catch (e) {
@@ -101,11 +88,10 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   @override
   Future<void> clearAll() async {
     try {
-      final prefs = await _prefs;
-      await prefs.remove(_serverUrlKey);
-      await prefs.remove(_usernameKey);
-      await prefs.remove(_passwordKey);
-      await prefs.remove(_userKey);
+      await _storage.delete(key: _serverUrlKey);
+      await _storage.delete(key: _usernameKey);
+      await _storage.delete(key: _passwordKey);
+      await _storage.delete(key: _userKey);
     } catch (e) {
       throw const CacheException(message: 'Failed to clear storage');
     }

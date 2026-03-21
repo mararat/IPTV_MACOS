@@ -18,7 +18,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     this._authRepository,
     this._xtreamApi,
     this._analyticsService,
-    dynamic _, // unused on macOS (was CacheMetadataDao)
     this._logger,
   ) : super(const AuthState.initial()) {
     on<AuthCheckAuth>(_onCheckAuth);
@@ -84,17 +83,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(s.copyWith(preloadComplete: false, liveLoading: true, vodLoading: true, seriesLoading: true));
 
     try {
-      final liveStreams = await _xtreamApi.getLiveStreams();
+      final results = await Future.wait([
+        _xtreamApi.getLiveStreams(),
+        _xtreamApi.getVodStreams(),
+        _xtreamApi.getSeries(),
+      ]);
       if (emit.isDone) return;
-      emit((state as AuthAuthenticated).copyWith(liveCount: liveStreams.length, liveLoading: false));
-
-      final vodStreams = await _xtreamApi.getVodStreams();
-      if (emit.isDone) return;
-      emit((state as AuthAuthenticated).copyWith(vodCount: vodStreams.length, vodLoading: false));
-
-      final seriesList = await _xtreamApi.getSeries();
-      if (emit.isDone) return;
-      emit((state as AuthAuthenticated).copyWith(seriesCount: seriesList.length, seriesLoading: false, preloadComplete: true));
+      emit((state as AuthAuthenticated).copyWith(
+        liveCount: results[0].length,
+        vodCount: results[1].length,
+        seriesCount: results[2].length,
+        liveLoading: false,
+        vodLoading: false,
+        seriesLoading: false,
+        preloadComplete: true,
+      ));
     } catch (e, st) {
       _logger.debug('Preload counts failed: $e', st);
       if (!emit.isDone) {

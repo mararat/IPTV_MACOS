@@ -1,9 +1,6 @@
 import 'package:iptv_macos/core/error/failures.dart';
 
 typedef ResultFuture<T> = Future<Either<Failure, T>>;
-typedef ResultStream<T> = Stream<Either<Failure, T>>;
-typedef DataMap = Map<String, dynamic>;
-
 sealed class Either<L, R> {
   const Either();
 
