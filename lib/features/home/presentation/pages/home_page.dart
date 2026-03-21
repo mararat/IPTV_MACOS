@@ -72,38 +72,43 @@ class HomePage extends StatelessWidget {
           ),
         ),
 
-        // Cards
+        // Cards — centered, max height constrained
         Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(32),
-            child: BlocBuilder<AuthBloc, AuthState>(
-              builder: (context, authState) {
-                final liveCount = authState is AuthAuthenticated ? authState.liveCount : 0;
-                final vodCount = authState is AuthAuthenticated ? authState.vodCount : 0;
-                final seriesCount = authState is AuthAuthenticated ? authState.seriesCount : 0;
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 24),
+              child: BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, authState) {
+                  final liveCount = authState is AuthAuthenticated ? authState.liveCount : 0;
+                  final vodCount = authState is AuthAuthenticated ? authState.vodCount : 0;
+                  final seriesCount = authState is AuthAuthenticated ? authState.seriesCount : 0;
 
-                return Row(
-                  children: [
-                    Expanded(child: _DashCard(
-                      icon: Icons.live_tv_rounded, title: 'Canlı TV', subtitle: 'Canlı yayın kanalları',
-                      count: liveCount, gradient: const [Color(0xFFE74C3C), Color(0xFFC0392B)],
-                      onTap: () => onNavigate(1),
-                    )),
-                    const SizedBox(width: 20),
-                    Expanded(child: _DashCard(
-                      icon: Icons.movie_rounded, title: 'Filmler', subtitle: 'Film arşivi',
-                      count: vodCount, gradient: const [Color(0xFF2980B9), Color(0xFF1A5276)],
-                      onTap: () => onNavigate(2),
-                    )),
-                    const SizedBox(width: 20),
-                    Expanded(child: _DashCard(
-                      icon: Icons.tv_rounded, title: 'Diziler', subtitle: 'Dizi arşivi',
-                      count: seriesCount, gradient: const [Color(0xFF1ABC9C), Color(0xFF117A65)],
-                      onTap: () => onNavigate(3),
-                    )),
-                  ],
-                );
-              },
+                  return ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 180, maxWidth: 900),
+                    child: Row(
+                      children: [
+                        Expanded(child: _DashCard(
+                          icon: Icons.live_tv_rounded, title: 'Canlı TV', subtitle: 'Canlı yayın kanalları',
+                          count: liveCount, gradient: const [Color(0xFFE74C3C), Color(0xFFC0392B)],
+                          onTap: () => onNavigate(1),
+                        )),
+                        const SizedBox(width: 16),
+                        Expanded(child: _DashCard(
+                          icon: Icons.movie_rounded, title: 'Filmler', subtitle: 'Film arşivi',
+                          count: vodCount, gradient: const [Color(0xFF2980B9), Color(0xFF1A5276)],
+                          onTap: () => onNavigate(2),
+                        )),
+                        const SizedBox(width: 16),
+                        Expanded(child: _DashCard(
+                          icon: Icons.tv_rounded, title: 'Diziler', subtitle: 'Dizi arşivi',
+                          count: seriesCount, gradient: const [Color(0xFF1ABC9C), Color(0xFF117A65)],
+                          onTap: () => onNavigate(3),
+                        )),
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         ),
@@ -198,43 +203,58 @@ class _DashCardState extends State<_DashCard> {
           transformAlignment: Alignment.center,
           decoration: BoxDecoration(
             gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: widget.gradient),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(16),
             boxShadow: [
-              BoxShadow(color: widget.gradient.last.withAlpha(_hovered ? 80 : 40), blurRadius: _hovered ? 24 : 12, offset: Offset(0, _hovered ? 8 : 4)),
+              BoxShadow(color: widget.gradient.last.withAlpha(_hovered ? 60 : 30), blurRadius: _hovered ? 20 : 10, offset: Offset(0, _hovered ? 6 : 3)),
             ],
           ),
-          child: Stack(
-            children: [
-              // Background icon
-              Positioned(right: -20, bottom: -20, child: Icon(widget.icon, size: 140, color: Colors.white.withAlpha(15))),
-              Padding(
-                padding: const EdgeInsets.all(28),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 52, height: 52,
-                      decoration: BoxDecoration(color: Colors.white.withAlpha(30), borderRadius: BorderRadius.circular(14)),
-                      child: Icon(widget.icon, color: Colors.white, size: 28),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(widget.title, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.3)),
-                    const SizedBox(height: 4),
-                    Text(widget.subtitle, style: TextStyle(fontSize: 13, color: Colors.white.withAlpha(200))),
-                    const Spacer(),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                      decoration: BoxDecoration(color: Colors.white.withAlpha(30), borderRadius: BorderRadius.circular(10)),
-                      child: Text(
-                        widget.count > 0 ? '${widget.count}' : '...',
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.white),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Stack(
+              children: [
+                Positioned(right: -16, bottom: -16, child: Icon(widget.icon, size: 100, color: Colors.white.withAlpha(12))),
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 38, height: 38,
+                            decoration: BoxDecoration(color: Colors.white.withAlpha(28), borderRadius: BorderRadius.circular(10)),
+                            child: Icon(widget.icon, color: Colors.white, size: 20),
+                          ),
+                          const SizedBox(width: 12),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(widget.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white, letterSpacing: -0.2)),
+                              Text(widget.subtitle, style: TextStyle(fontSize: 11, color: Colors.white.withAlpha(180))),
+                            ],
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                      const Spacer(),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                            decoration: BoxDecoration(color: Colors.white.withAlpha(28), borderRadius: BorderRadius.circular(8)),
+                            child: Text(
+                              widget.count > 0 ? '${widget.count}' : '...',
+                              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white),
+                            ),
+                          ),
+                          const Spacer(),
+                          Icon(Icons.arrow_forward_rounded, size: 18, color: Colors.white.withAlpha(140)),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
