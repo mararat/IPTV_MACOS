@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:media_kit/media_kit.dart' as mk;
 import 'package:media_kit_video/media_kit_video.dart';
 
@@ -43,9 +44,13 @@ class InlinePlayerState extends State<InlinePlayer> {
   Duration _buffer = Duration.zero;
   bool _isPlaying = false;
   bool _isBuffering = false;
+  double _playbackSpeed = 1.0;
   List<mk.AudioTrack> _audioTracks = [];
   List<mk.SubtitleTrack> _subtitleTracks = [];
   final List<StreamSubscription<dynamic>> _subs = [];
+  final FocusNode _focusNode = FocusNode();
+
+  static const _speeds = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
 
   VideoController? get videoController => _videoController;
   mk.Player? get player => _player;
@@ -67,6 +72,7 @@ class InlinePlayerState extends State<InlinePlayer> {
 
   @override
   void dispose() {
+    _focusNode.dispose();
     _disposePlayer();
     super.dispose();
   }
@@ -120,6 +126,85 @@ class InlinePlayerState extends State<InlinePlayer> {
     _player?.setVolume(_isMuted ? 0 : _volume);
   }
 
+  void _seekRelative(int seconds) {
+    if (widget.isLive) return;
+    final target = _position + Duration(seconds: seconds);
+    if (seconds < 0) {
+      _player?.seek(target < Duration.zero ? Duration.zero : target);
+    } else {
+      _player?.seek(_duration > Duration.zero && target > _duration ? _duration : target);
+    }
+  }
+
+  void _cycleSpeed(int direction) {
+    if (widget.isLive) return;
+    final idx = _speeds.indexOf(_playbackSpeed);
+    final next = (idx + direction).clamp(0, _speeds.length - 1);
+    setState(() => _playbackSpeed = _speeds[next]);
+    _player?.setRate(_playbackSpeed);
+  }
+
+  void _changeVolume(double delta) {
+    final v = (_volume + delta).clamp(0.0, 100.0);
+    setState(() { _volume = v; _isMuted = false; });
+    _player?.setVolume(v);
+  }
+
+  KeyEventResult _handleKey(FocusNode node, KeyEvent event) {
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) return KeyEventResult.ignored;
+    final key = event.logicalKey;
+
+    if (key == LogicalKeyboardKey.space) {
+      _player?.playOrPause();
+      _onMouseMove();
+      return KeyEventResult.handled;
+    }
+    if (key == LogicalKeyboardKey.arrowLeft) {
+      _seekRelative(-10);
+      _onMouseMove();
+      return KeyEventResult.handled;
+    }
+    if (key == LogicalKeyboardKey.arrowRight) {
+      _seekRelative(10);
+      _onMouseMove();
+      return KeyEventResult.handled;
+    }
+    if (key == LogicalKeyboardKey.arrowUp) {
+      _changeVolume(5);
+      _onMouseMove();
+      return KeyEventResult.handled;
+    }
+    if (key == LogicalKeyboardKey.arrowDown) {
+      _changeVolume(-5);
+      _onMouseMove();
+      return KeyEventResult.handled;
+    }
+    if (key == LogicalKeyboardKey.keyM) {
+      _toggleMute();
+      _onMouseMove();
+      return KeyEventResult.handled;
+    }
+    if (key == LogicalKeyboardKey.keyF) {
+      widget.onFullscreen?.call();
+      return KeyEventResult.handled;
+    }
+    if (key == LogicalKeyboardKey.escape) {
+      widget.onClose?.call();
+      return KeyEventResult.handled;
+    }
+    if (key == LogicalKeyboardKey.bracketRight) {
+      _cycleSpeed(1);
+      _onMouseMove();
+      return KeyEventResult.handled;
+    }
+    if (key == LogicalKeyboardKey.bracketLeft) {
+      _cycleSpeed(-1);
+      _onMouseMove();
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
+  }
+
   String _fmt(Duration d) {
     final h = d.inHours;
     final m = d.inMinutes.remainder(60).toString().padLeft(2, '0');
@@ -135,112 +220,144 @@ class InlinePlayerState extends State<InlinePlayer> {
       return const Center(child: CircularProgressIndicator(color: Colors.white70));
     }
 
-    return MouseRegion(
-      onHover: (_) => _onMouseMove(),
-      child: Container(
-        color: Colors.black,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Video(controller: _videoController!, controls: (_) => const SizedBox.shrink()),
-            if (_isBuffering) const Center(child: CircularProgressIndicator(color: Colors.white70, strokeWidth: 3)),
+    return Focus(
+      focusNode: _focusNode,
+      autofocus: true,
+      onKeyEvent: _handleKey,
+      child: MouseRegion(
+        onHover: (_) => _onMouseMove(),
+        child: GestureDetector(
+          onDoubleTap: widget.onFullscreen,
+          onTap: () {
+            _focusNode.requestFocus();
+            setState(() => _showControls = !_showControls);
+            if (_showControls) _startHideTimer();
+          },
+          child: Container(
+            color: Colors.black,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                SizedBox.expand(child: Video(controller: _videoController!, controls: (_) => const SizedBox.shrink())),
+                if (_isBuffering) const Center(child: CircularProgressIndicator(color: Colors.white70, strokeWidth: 3)),
 
-            // Top overlay
-            Positioned(
-              top: 0, left: 0, right: 0,
-              child: IgnorePointer(
-                ignoring: !_showControls,
-                child: AnimatedOpacity(
-                  opacity: _showControls ? 1.0 : 0.0,
-                  duration: const Duration(milliseconds: 200),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                    decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.black87, Colors.transparent])),
-                    child: Row(children: [
-                      if (widget.topExtra != null) ...[widget.topExtra!, const SizedBox(width: 10)],
-                      Expanded(child: Text(widget.title ?? '', style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis)),
-                      if (_audioTracks.length > 1)
-                        PopupMenuButton<mk.AudioTrack>(
-                          tooltip: 'Ses Dili', icon: const Icon(Icons.audiotrack, color: Colors.white70, size: 20), offset: const Offset(0, 40),
-                          itemBuilder: (_) => _audioTracks.map((t) => PopupMenuItem(value: t, child: Text(t.title ?? t.language ?? t.id, style: const TextStyle(fontSize: 12)))).toList(),
-                          onSelected: (t) => _player?.setAudioTrack(t),
-                        ),
-                      if (_subtitleTracks.isNotEmpty)
-                        PopupMenuButton<mk.SubtitleTrack?>(
-                          tooltip: 'Altyazı', icon: const Icon(Icons.closed_caption, color: Colors.white70, size: 20), offset: const Offset(0, 40),
-                          itemBuilder: (_) => [
-                            const PopupMenuItem(value: null, child: Text('Kapalı', style: TextStyle(fontSize: 12))),
-                            ..._subtitleTracks.map((t) => PopupMenuItem(value: t, child: Text(t.title ?? t.language ?? t.id, style: const TextStyle(fontSize: 12)))),
-                          ],
-                          onSelected: (t) => t == null ? _player?.setSubtitleTrack(mk.SubtitleTrack.no()) : _player?.setSubtitleTrack(t),
-                        ),
-                      if (widget.onFullscreen != null)
-                        IconButton(icon: const Icon(Icons.fullscreen, color: Colors.white, size: 22), onPressed: widget.onFullscreen),
-                      if (widget.onClose != null)
-                        IconButton(icon: const Icon(Icons.close, color: Colors.white70, size: 20), onPressed: widget.onClose),
-                    ]),
-                  ),
-                ),
-              ),
-            ),
-
-            // Bottom overlay
-            Positioned(
-              bottom: 0, left: 0, right: 0,
-              child: IgnorePointer(
-                ignoring: !_showControls,
-                child: AnimatedOpacity(
-                  opacity: _showControls ? 1.0 : 0.0,
-                  duration: const Duration(milliseconds: 200),
-                  child: Container(
-                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
-                    decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.bottomCenter, end: Alignment.topCenter, colors: [Colors.black87, Colors.transparent])),
-                    child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      // Seek bar (hidden for live)
-                      if (!widget.isLive && _duration > Duration.zero)
-                        Row(children: [
-                          Text(_fmt(_position), style: const TextStyle(color: Colors.white70, fontSize: 11)),
-                          const SizedBox(width: 6),
-                          Expanded(child: SliderTheme(
-                            data: SliderThemeData(trackHeight: 3, thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6), activeTrackColor: cs.primary, inactiveTrackColor: Colors.white24, thumbColor: Colors.white, secondaryActiveTrackColor: Colors.white38),
-                            child: Slider(
-                              value: _position.inMilliseconds.toDouble().clamp(0, _duration.inMilliseconds.toDouble()),
-                              max: _duration.inMilliseconds.toDouble(),
-                              secondaryTrackValue: _buffer.inMilliseconds.toDouble().clamp(0, _duration.inMilliseconds.toDouble()),
-                              onChanged: (v) => _player?.seek(Duration(milliseconds: v.toInt())),
+                // Top overlay
+                Positioned(
+                  top: 0, left: 0, right: 0,
+                  child: IgnorePointer(
+                    ignoring: !_showControls,
+                    child: AnimatedOpacity(
+                      opacity: _showControls ? 1.0 : 0.0,
+                      duration: const Duration(milliseconds: 200),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.black87, Colors.transparent])),
+                        child: Row(children: [
+                          if (widget.topExtra != null) ...[widget.topExtra!, const SizedBox(width: 10)],
+                          Expanded(child: Text(widget.title ?? '', style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis)),
+                          if (_audioTracks.length > 1)
+                            PopupMenuButton<mk.AudioTrack>(
+                              tooltip: 'Ses Dili', icon: const Icon(Icons.audiotrack, color: Colors.white70, size: 20), offset: const Offset(0, 40),
+                              itemBuilder: (_) => _audioTracks.map((t) => PopupMenuItem(value: t, child: Text(t.title ?? t.language ?? t.id, style: const TextStyle(fontSize: 12)))).toList(),
+                              onSelected: (t) => _player?.setAudioTrack(t),
                             ),
-                          )),
-                          const SizedBox(width: 6),
-                          Text(_fmt(_duration), style: const TextStyle(color: Colors.white70, fontSize: 11)),
+                          if (_subtitleTracks.isNotEmpty)
+                            PopupMenuButton<mk.SubtitleTrack?>(
+                              tooltip: 'Altyazi', icon: const Icon(Icons.closed_caption, color: Colors.white70, size: 20), offset: const Offset(0, 40),
+                              itemBuilder: (_) => [
+                                const PopupMenuItem(value: null, child: Text('Kapali', style: TextStyle(fontSize: 12))),
+                                ..._subtitleTracks.map((t) => PopupMenuItem(value: t, child: Text(t.title ?? t.language ?? t.id, style: const TextStyle(fontSize: 12)))),
+                              ],
+                              onSelected: (t) => t == null ? _player?.setSubtitleTrack(mk.SubtitleTrack.no()) : _player?.setSubtitleTrack(t),
+                            ),
+                          if (widget.onFullscreen != null)
+                            IconButton(icon: const Icon(Icons.fullscreen, color: Colors.white, size: 22), onPressed: widget.onFullscreen),
+                          if (widget.onClose != null)
+                            IconButton(icon: const Icon(Icons.close, color: Colors.white70, size: 20), onPressed: widget.onClose),
                         ]),
-                      // Controls
-                      Row(children: [
-                        if (!widget.isLive)
-                          IconButton(icon: const Icon(Icons.replay_10, color: Colors.white, size: 22), onPressed: () {
-                            final p = _position - const Duration(seconds: 10);
-                            _player?.seek(p < Duration.zero ? Duration.zero : p);
-                          }),
-                        IconButton(icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow, color: Colors.white, size: 26), onPressed: () => _player?.playOrPause()),
-                        if (!widget.isLive)
-                          IconButton(icon: const Icon(Icons.forward_10, color: Colors.white, size: 22), onPressed: () {
-                            var p = _position + const Duration(seconds: 10);
-                            if (p > _duration && _duration > Duration.zero) p = _duration;
-                            _player?.seek(p);
-                          }),
-                        const SizedBox(width: 8),
-                        IconButton(icon: Icon(_isMuted ? Icons.volume_off : Icons.volume_up, color: Colors.white70, size: 20), onPressed: _toggleMute),
-                        SizedBox(width: 80, child: SliderTheme(
-                          data: const SliderThemeData(trackHeight: 2, thumbShape: RoundSliderThumbShape(enabledThumbRadius: 5), activeTrackColor: Colors.white70, inactiveTrackColor: Colors.white24, thumbColor: Colors.white),
-                          child: Slider(value: _isMuted ? 0 : _volume, max: 100, onChanged: (v) { setState(() { _volume = v; _isMuted = false; }); _player?.setVolume(v); }),
-                        )),
-                        const Spacer(),
-                      ]),
-                    ]),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+
+                // Bottom overlay
+                Positioned(
+                  bottom: 0, left: 0, right: 0,
+                  child: IgnorePointer(
+                    ignoring: !_showControls,
+                    child: AnimatedOpacity(
+                      opacity: _showControls ? 1.0 : 0.0,
+                      duration: const Duration(milliseconds: 200),
+                      child: Container(
+                        padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+                        decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.bottomCenter, end: Alignment.topCenter, colors: [Colors.black87, Colors.transparent])),
+                        child: Column(mainAxisSize: MainAxisSize.min, children: [
+                          // Seek bar (hidden for live)
+                          if (!widget.isLive && _duration > Duration.zero)
+                            Row(children: [
+                              Text(_fmt(_position), style: const TextStyle(color: Colors.white70, fontSize: 11)),
+                              const SizedBox(width: 6),
+                              Expanded(child: SliderTheme(
+                                data: SliderThemeData(trackHeight: 3, thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6), activeTrackColor: cs.primary, inactiveTrackColor: Colors.white24, thumbColor: Colors.white, secondaryActiveTrackColor: Colors.white38),
+                                child: Slider(
+                                  value: _position.inMilliseconds.toDouble().clamp(0, _duration.inMilliseconds.toDouble()),
+                                  max: _duration.inMilliseconds.toDouble(),
+                                  secondaryTrackValue: _buffer.inMilliseconds.toDouble().clamp(0, _duration.inMilliseconds.toDouble()),
+                                  onChanged: (v) => _player?.seek(Duration(milliseconds: v.toInt())),
+                                ),
+                              )),
+                              const SizedBox(width: 6),
+                              Text(_fmt(_duration), style: const TextStyle(color: Colors.white70, fontSize: 11)),
+                            ]),
+                          // Controls
+                          Row(children: [
+                            if (!widget.isLive)
+                              IconButton(icon: const Icon(Icons.replay_10, color: Colors.white, size: 22), onPressed: () => _seekRelative(-10)),
+                            IconButton(icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow, color: Colors.white, size: 26), onPressed: () => _player?.playOrPause()),
+                            if (!widget.isLive)
+                              IconButton(icon: const Icon(Icons.forward_10, color: Colors.white, size: 22), onPressed: () => _seekRelative(10)),
+                            const SizedBox(width: 8),
+                            IconButton(icon: Icon(_isMuted ? Icons.volume_off : Icons.volume_up, color: Colors.white70, size: 20), onPressed: _toggleMute),
+                            SizedBox(width: 80, child: SliderTheme(
+                              data: const SliderThemeData(trackHeight: 2, thumbShape: RoundSliderThumbShape(enabledThumbRadius: 5), activeTrackColor: Colors.white70, inactiveTrackColor: Colors.white24, thumbColor: Colors.white),
+                              child: Slider(value: _isMuted ? 0 : _volume, max: 100, onChanged: (v) { setState(() { _volume = v; _isMuted = false; }); _player?.setVolume(v); }),
+                            )),
+                            const Spacer(),
+                            // Playback speed (VOD/series only)
+                            if (!widget.isLive)
+                              PopupMenuButton<double>(
+                                tooltip: 'Hiz',
+                                offset: const Offset(0, -280),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: _playbackSpeed != 1.0 ? Colors.white24 : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text('${_playbackSpeed}x', style: const TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w600)),
+                                ),
+                                itemBuilder: (_) => _speeds.map((s) => PopupMenuItem(
+                                  value: s,
+                                  child: Row(children: [
+                                    if (s == _playbackSpeed) const Icon(Icons.check, size: 16, color: Colors.white) else const SizedBox(width: 16),
+                                    const SizedBox(width: 8),
+                                    Text('${s}x', style: const TextStyle(fontSize: 13)),
+                                  ]),
+                                )).toList(),
+                                onSelected: (s) {
+                                  setState(() => _playbackSpeed = s);
+                                  _player?.setRate(s);
+                                },
+                              ),
+                          ]),
+                        ]),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
